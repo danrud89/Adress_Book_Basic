@@ -1,2 +1,1 @@
-# Adress_Book_Basic
-A simple C++ address book
+A simple Address_Book console aplication created with C++.
