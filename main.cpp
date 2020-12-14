@@ -59,7 +59,7 @@ bool fileExists (const string& fileName)
     return false;
 }
 
-int  FindPositionInVector (vector <Person> singlePerson, int contactNumberToBeChanged)
+auto FindPositionInVector (vector <Person> singlePerson, int contactNumberToBeChanged)
 {
     vector <string> IdNumbersOnly;
     for(auto index = 0; index < singlePerson.size(); index ++)
@@ -67,7 +67,7 @@ int  FindPositionInVector (vector <Person> singlePerson, int contactNumberToBeCh
         IdNumbersOnly.push_back(singlePerson[index].contactId);
     }
 
-    for (int index = 0; index < IdNumbersOnly.size(); index ++)
+    for (auto index = 0; index < IdNumbersOnly.size(); index ++)
     {
         if (IdNumbersOnly[index] == intToString(contactNumberToBeChanged))
 
@@ -75,13 +75,13 @@ int  FindPositionInVector (vector <Person> singlePerson, int contactNumberToBeCh
     }
 }
 
-int ReturnLastContactNumber (vector <Person> singlePerson)
+auto ReturnLastContactNumber (vector <Person> singlePerson)
 {
     if (singlePerson.empty() == true )
         return 0;
     else
     {
-        int lastContactNumber = singlePerson.size() - 1;
+        auto lastContactNumber = singlePerson.size() - 1;
         return atoi(singlePerson[lastContactNumber].contactId.c_str());
     }
 }
@@ -92,11 +92,11 @@ void ExportNewUser (vector<User>& singleUser)
     DatabaseUser.open("Uzytkownicy.txt", ios::out|ios::app);
     if (DatabaseUser.good() == true)
     {
-        for(auto index = 0; auto index < singleUser.size(); index ++)
+        for(auto index = 0; index < singleUser.size(); index ++)
         {
-            DatabaseUser<< usersForExport[index].userId + "|"
-                            + usersForExport[index].userName + "|"
-                            + usersForExport[index].userPassword + "|";
+            DatabaseUser<< singleUser[index].userId + "|"
+                            + singleUser[index].userName + "|"
+                            + singleUser[index].userPassword + "|";
             DatabaseUser <<endl;
         }
 
@@ -106,7 +106,6 @@ void ExportNewUser (vector<User>& singleUser)
         cout<< "Uzytkownik zostal dodany!" <<endl;
         Sleep(1500);
     }
-
     else
     {
         cout<< "Nie odnaleziono takiego pliku" <<endl;
@@ -120,13 +119,15 @@ void RegisterNewUser(vector <User> &singleUser)
     cout<< ">>>REJESTRACJA NOWEGO UZYTKOWNIKA<<<" <<endl;
     cout<< "************************************" <<endl;
     cout<< endl;
+
+    ofstream DatabaseContact( "Uzytkownicy.txt" );
     User individualUser;
     string userName, userPassword, userId;
     cout<< "Podaj nazwe uzytkownika: ";
     cin>> userName;
-    for (auto index = 0; auto index < singleUser.size(); index ++)
+    for (auto index = 0; index < singleUser.size(); index ++)
     {
-        if (user[index].userName == userName)
+        if (singleUser[index].userName == userName)
         {
             cout << "Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ";
             cin >> userName;
@@ -135,11 +136,12 @@ void RegisterNewUser(vector <User> &singleUser)
     }
     cout<< "Podaj haslo: ";
     cin>> userPassword;
-    userId = intToStringConversion(singleUser.size() + 1);
+    userId = intToString(singleUser.size() + 1);
 
     individualUser.userId = userId;
-    individualUser.userName = UserName;
+    individualUser.userName = userName;
     individualUser.userPassword = userPassword;
+
     singleUser.push_back(individualUser);
     ExportNewUser(singleUser);
 }
@@ -156,9 +158,9 @@ void ImportAllContacts (vector <Person> &singlePerson)
         while(getline(DatabaseContact,personalData))
         {
             string individualPersonalData;
-            int singlePersonNumber = 1;
+            auto singlePersonNumber = 1;
 
-            for (int index = 0; index < personalData.length(); index ++)
+            for (auto index = 0; index < personalData.length(); index ++)
             {
                 if (personalData[index] != '|')
                 {
@@ -252,6 +254,47 @@ void AddNewContact (vector<Person>& singlePerson)
     ExportContactIntoFile(singlePerson);
 }
 
+void SearchByName (vector <Person> & singlePerson, string nameToSearch)
+{
+    system("cls");
+    cout << ">>>WYSZUKAJ KONTAKT PO IMIENIU<<<" << endl;
+    cout << "*********************************" << endl;
+    cout << endl;
+
+    cout << "Podaj imie: " << endl;
+    cin >> nameToSearch;
+    for (auto index = 0; index < singlePerson.size(); index ++)
+    {
+        if (singlePerson[index].name == nameToSearch)
+        {
+            cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
+            cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
+            cout << singlePerson[index].adress << " " << endl;
+        }
+    }
+    system("pause");
+}
+
+void SearchByLastName (vector <Person> & singlePerson, string lastNameToSearch)
+{
+    system("cls");
+    cout << ">>>WYSZUKAJ KONTAKT PO NAZWISKU<<<" << endl;
+    cout << "**********************************" << endl;
+    cout << endl;
+    cout << "Podaj nazwisko: " << endl;
+    cin >> lastNameToSearch;
+    for (auto index = 0; index < singlePerson.size(); index ++)
+    {
+        if (singlePerson[index].lastName == lastNameToSearch)
+        {
+            cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
+            cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
+            cout << singlePerson[index].adress << " " << endl;
+        }
+    }
+    system("pause");
+}
+
 void SearchForAContact (vector <Person> &singlePerson)
 {
     string nameToSearch, lastNameToSearch;
@@ -274,46 +317,16 @@ void SearchForAContact (vector <Person> &singlePerson)
         {
             case 1:
             {
-                system("cls");
-                cout << ">>>WYSZUKAJ KONTAKT PO IMIENIU<<<" << endl;
-                cout << "*********************************" << endl;
-                cout << endl;
-
-                cout << "Podaj imie: " << endl;
-                cin >> nameToSearch;
-                for (auto index = 0; index < singlePerson.size(); index ++)
-                {
-                    if (singlePerson[index].name == nameToSearch)
-                    {
-                        cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-                        cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
-                        cout << singlePerson[index].adress << " " << endl;
-                    }
-                }
-                system("pause");
+                SearchByName (singlePerson, nameToSearch);
                 break;
             }
 
             case 2:
             {
-                system("cls");
-                cout << ">>>WYSZUKAJ KONTAKT PO NAZWISKU<<<" << endl;
-                cout << "**********************************" << endl;
-                cout << endl;
-                cout << "Podaj nazwisko: " << endl;
-                cin >> lastNameToSearch;
-                for (auto index = 0; index < singlePerson.size(); index ++)
-                {
-                    if (singlePerson[index].lastName == lastNameToSearch)
-                    {
-                        cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-                        cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
-                        cout << singlePerson[index].adress << " " << endl;
-                    }
-                }
-                system("pause");
+                SearchByLastName (singlePerson, lastNameToSearch);
                 break;
             }
+
             case 3:
                 break;
         }
@@ -323,7 +336,6 @@ void SearchForAContact (vector <Person> &singlePerson)
         cout << "Podales niewlasciwa cyfre. Sproboj jeszcze raz." << endl;
         Sleep(1500);
     }
-
 }
 
 void ViewAllContacts (vector <Person> &singlePerson)
@@ -381,7 +393,7 @@ void ContactEdition(vector <Person> &singlePerson)
     int positionInVector = FindPositionInVector(singlePerson, contactNumberToBeChanged);
     if ((checkIfContactExists(singlePerson, contactNumberToBeChanged) == true ))
     {
-        for(int index = 0; index < singlePerson.size(); index ++)
+        for(auto index = 0; index < singlePerson.size(); index ++)
         {
             if (singlePerson[index].contactId == intToString(contactNumberToBeChanged))
             {
@@ -501,7 +513,7 @@ int main()
         vector <User> singleUser;
         if(fileExists("U¿ytkownicy.txt"))
         {
-            ImportAllUsers (singleUser);
+            //ImportAllUsers (singleUser);
         }
 
         if (loggedUserId == 0)
@@ -527,7 +539,7 @@ int main()
             break;
             case 2:
             {
-                LoggTheUserIn (singleUser)
+                //LoggTheUserIn (singleUser)
             }
             break;
 
@@ -624,6 +636,5 @@ int main()
             }
             }
         }
-
     }
 }
