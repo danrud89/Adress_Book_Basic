@@ -9,9 +9,17 @@
 
 using namespace std;
 
+struct User
+{
+    string userId;
+    string userName;
+    string userPassword;
+};
+
 struct Person
 {
     string contactId;
+    string userId;
     string name;
     string lastName;
     string phoneNumber;
@@ -151,7 +159,7 @@ void ExportContactIntoFile (vector <Person> &singlePerson )
     Sleep(1000);
 }
 
-int AddNewContact (vector<Person>& singlePerson)
+void AddNewContact (vector<Person>& singlePerson)
 {
     system("cls");
     cout << ">>>DODAJ NOWY KONTAKT<<<" << endl;
@@ -428,33 +436,79 @@ void RemoveContact(vector <Person> &singlePerson)
 
 int main()
 {
-    vector <Person> singlePerson;
-
-    if(fileExists("Kontakty.txt"))
-    {
-        ImportAllContacts(singlePerson);
-    }
+    int loggedUserId = 0;
 
     while (true)
     {
-        system("cls");
-        cout << "\t**********************************************" << endl;
-        cout << "\t>>>>>>>>>>>>>>> KSIAZKA ADRESOWA <<<<<<<<<<<<<" << endl;
-        cout << "\t**********************************************" << endl << endl;
-        cout << "\t************ 1.DODAJ NOWY KONTAKT ************" << endl;
-        cout << "\t************ 2.WYSZUKAJ KONTAKT **************" << endl;
-        cout << "\t******* 3.WYSWIETL WSZYSTKIE KONTAKTY ********" << endl;
-        cout << "\t************ 4.EDYCJA KONTAKTU ***************" << endl;
-        cout << "\t************* 5.USUN KONTAKT *****************" << endl;
-        cout << "\t************** 6.ZAKONCZ *********************" << endl;
-        cout << endl;
-        cout << "Prosze wybrac opcje ==> ";
-        int userSelect;
-        cin >> userSelect;
-
-
-        switch (userSelect)
+        vector <User> singleUser;
+        if(fileExists("U¿ytkownicy.txt"))
         {
+            ImportAllUsers (singleUser);
+        }
+
+        if (loggedUserId == 0)
+        {
+            system("cls");
+            cout << "\t**********************************************" << endl;
+            cout << "\t>>>>>>>>>>> KSIAZKA ADRESOWA <<<<<<<<<<<<<" << endl;
+            cout << "\t**********************************************" << endl << endl;
+            cout << "\t************ 1.REJESTRACJA ************" << endl;
+            cout << "\t************* 2.LOGOWANIE **************" << endl;
+            cout << "\t************** 3.WYJSCIE ********" << endl;
+            cout << endl;
+            cout << "Prosze wybrac opcje ==> ";
+            int userSelection;
+            cin >> userSelection;
+
+            switch (userSelection)
+            {
+            case 1:
+            {
+                RegisterNewUser(singleUser);
+            }
+            break;
+            case 2:
+            {
+                LoggTheUserIn (singleUser)
+            }
+            break;
+
+            case 3:
+            {
+                cout << "Nastapi zamkniecie programu...";
+                Sleep(1500);
+                exit(0);
+            }
+            break;
+            }
+        }
+        else
+        {
+
+            vector <Person> singlePerson;
+
+            if(fileExists("Kontakty.txt"))
+            {
+                ImportAllContacts(singlePerson);
+            }
+            system("cls");
+            cout << "\t**********************************************" << endl;
+            cout << "\t>>>>>>>>>>>>>>> MENU GLOWNE <<<<<<<<<<<<<" << endl;
+            cout << "\t**********************************************" << endl << endl;
+            cout << "\t************ 1.DODAJ NOWY KONTAKT ************" << endl;
+            cout << "\t************ 2.WYSZUKAJ KONTAKT **************" << endl;
+            cout << "\t******* 3.WYSWIETL WSZYSTKIE KONTAKTY ********" << endl;
+            cout << "\t************ 4.EDYCJA KONTAKTU ***************" << endl;
+            cout << "\t************* 5.USUN KONTAKT *****************" << endl;
+            cout << "\t************** 6.ZAKONCZ *********************" << endl;
+            cout << endl;
+            cout << "Prosze wybrac opcje ==> ";
+            int userSelect;
+            cin >> userSelect;
+
+
+            switch (userSelect)
+            {
             case 1:
             {
                 AddNewContact(singlePerson);
@@ -510,6 +564,9 @@ int main()
                 Sleep(1500);
                 return 0;
             }
+            }
         }
+
     }
 }
+
