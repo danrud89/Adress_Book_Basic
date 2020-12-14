@@ -86,6 +86,64 @@ int ReturnLastContactNumber (vector <Person> singlePerson)
     }
 }
 
+void ExportNewUser (vector<User>& singleUser)
+{
+    fstream DatabaseUser;
+    DatabaseUser.open("Uzytkownicy.txt", ios::out|ios::app);
+    if (DatabaseUser.good() == true)
+    {
+        for(auto index = 0; auto index < singleUser.size(); index ++)
+        {
+            DatabaseUser<< usersForExport[index].userId + "|"
+                            + usersForExport[index].userName + "|"
+                            + usersForExport[index].userPassword + "|";
+            DatabaseUser <<endl;
+        }
+
+        DatabaseUser.close();
+        singleUser.clear();
+        cout<< endl;
+        cout<< "Uzytkownik zostal dodany!" <<endl;
+        Sleep(1500);
+    }
+
+    else
+    {
+        cout<< "Nie odnaleziono takiego pliku" <<endl;
+        Sleep(1500);
+    }
+}
+
+void RegisterNewUser(vector <User> &singleUser)
+{
+    system("cls");
+    cout<< ">>>REJESTRACJA NOWEGO UZYTKOWNIKA<<<" <<endl;
+    cout<< "************************************" <<endl;
+    cout<< endl;
+    User individualUser;
+    string userName, userPassword, userId;
+    cout<< "Podaj nazwe uzytkownika: ";
+    cin>> userName;
+    for (auto index = 0; auto index < singleUser.size(); index ++)
+    {
+        if (user[index].userName == userName)
+        {
+            cout << "Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ";
+            cin >> userName;
+            index = 0;
+        }
+    }
+    cout<< "Podaj haslo: ";
+    cin>> userPassword;
+    userId = intToStringConversion(singleUser.size() + 1);
+
+    individualUser.userId = userId;
+    individualUser.userName = UserName;
+    individualUser.userPassword = userPassword;
+    singleUser.push_back(individualUser);
+    ExportNewUser(singleUser);
+}
+
 void ImportAllContacts (vector <Person> &singlePerson)
 {
     Person individualPerson;
@@ -569,4 +627,3 @@ int main()
 
     }
 }
-
