@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <conio.h>
 
 using namespace std;
 
@@ -16,15 +17,15 @@ struct User
     string userPassword;
 };
 
-struct Person
+struct Contact
 {
     string contactId;
     string userId;
-    string name;
-    string lastName;
-    string phoneNumber;
-    string eMail;
-    string adress;
+    string contactName;
+    string contactLastName;
+    string contactPhoneNumber;
+    string contactEmail;
+    string contactAddress;
 };
 
 string intToString(int IdNumber)
@@ -34,12 +35,12 @@ string intToString(int IdNumber)
     return  ss.str();
 }
 
-bool checkIfContactExists(vector <Person> singlePerson, int contactNumberToBeChanged)
+bool checkIfContactExists(vector <Contact> singleContact, int contactNumberToBeChanged)
 {
     vector <string> IdNumbersOnly;
-    for(auto index = 0; index < singlePerson.size(); index ++)
+    for(auto index = 0; index < singleContact.size(); index ++)
     {
-        IdNumbersOnly.push_back(singlePerson[index].contactId);
+        IdNumbersOnly.push_back(singleContact[index].contactId);
     }
     auto itr = find(IdNumbersOnly.begin(), IdNumbersOnly.end(), intToString(contactNumberToBeChanged));
     if (itr != IdNumbersOnly.end()) return true;
@@ -48,41 +49,29 @@ bool checkIfContactExists(vector <Person> singlePerson, int contactNumberToBeCha
 
 bool fileExists (const string& fileName)
 {
-    fstream DatabaseContact;
-    DatabaseContact.open(fileName.c_str(), ios::in);
-    if ( DatabaseContact.is_open() )
+    fstream Database;
+    Database.open(fileName.c_str(), ios::in);
+    if ( Database.is_open() )
     {
-        DatabaseContact.close();
+        Database.close();
         return true;
     }
-    DatabaseContact.close();
+    Database.close();
     return false;
 }
 
-int FindPositionInVector (vector <Person> singlePerson, int contactNumberToBeChanged)
+int FindPositionInVector (vector <Contact> singleContact, int contactNumberToBeChanged)
 {
     vector <string> IdNumbersOnly;
-    for(auto index = 0; index < singlePerson.size(); index ++)
+    for(auto index = 0; index < singleContact.size(); index ++)
     {
-        IdNumbersOnly.push_back(singlePerson[index].contactId);
+        IdNumbersOnly.push_back(singleContact[index].contactId);
     }
 
     for (auto index = 0; index < IdNumbersOnly.size(); index ++)
     {
         if (IdNumbersOnly[index] == intToString(contactNumberToBeChanged))
-
             return index;
-    }
-}
-
-int ReturnLastContactNumber (vector <Person> singlePerson)
-{
-    if (singlePerson.empty() == true )
-        return 0;
-    else
-    {
-        auto lastContactNumber = singlePerson.size() - 1;
-        return atoi(singlePerson[lastContactNumber].contactId.c_str());
     }
 }
 
@@ -139,20 +128,20 @@ void ExportNewUser (vector<User>& singleUser)
         for(auto index = 0; index < singleUser.size(); index ++)
         {
             DatabaseUser<< singleUser[index].userId + "|"
-                            + singleUser[index].userName + "|"
-                            + singleUser[index].userPassword + "|";
+                        + singleUser[index].userName + "|"
+                        + singleUser[index].userPassword + "|";
             DatabaseUser <<endl;
         }
 
         DatabaseUser.close();
         singleUser.clear();
         cout<< endl;
-        cout<< "Uzytkownik zostal dodany!" <<endl;
+        cout<< "Dodano nowego uzytkownika." <<endl;
         Sleep(1500);
     }
     else
     {
-        cout<< "Nie odnaleziono takiego pliku" <<endl;
+        cout<< "Nie odnaleziono pliku!" <<endl;
         Sleep(1500);
     }
 }
@@ -164,70 +153,72 @@ void RegisterNewUser(vector <User> &singleUser)
     cout<< "************************************" <<endl;
     cout<< endl;
 
-    ofstream DatabaseContact( "Uzytkownicy.txt" );
-    User individualUser;
-    string userName, userPassword, userId;
-    cout<< "Podaj nazwe uzytkownika: ";
-    cin>> userName;
-    for (auto index = 0; index < singleUser.size(); index ++)
+    if(fileExists("Uzytkownicy.txt") == false) ofstream DatabaseUser( "Uzytkownicy.txt" );
+    else
     {
-        if (singleUser[index].userName == userName)
+        User individualUser;
+        string userName, userPassword, userId;
+        cout<< "Podaj nazwe uzytkownika: ";
+        cin>> userName;
+        for (auto index = 0; index < singleUser.size(); index ++)
         {
-            cout << "Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ";
-            cin >> userName;
-            index = 0;
+            if (singleUser[index].userName == userName)
+            {
+                cout << "Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ";
+                cin >> userName;
+                index = 0;
+            }
         }
+        cout<< "Podaj haslo: ";
+        cin>> userPassword;
+        userId = intToString(singleUser.size() + 1);
+
+        individualUser.userId = userId;
+        individualUser.userName = userName;
+        individualUser.userPassword = userPassword;
+
+        singleUser.push_back(individualUser);
+        ExportNewUser(singleUser);
     }
-    cout<< "Podaj haslo: ";
-    cin>> userPassword;
-    userId = intToString(singleUser.size() + 1);
-
-    individualUser.userId = userId;
-    individualUser.userName = userName;
-    individualUser.userPassword = userPassword;
-
-    singleUser.push_back(individualUser);
-    ExportNewUser(singleUser);
 }
 
 int LoggTheUserIn (vector <User> &singleUser)
 {
     system("cls");
-    cout<< ">>>LOGOWANIE<<<" <<endl;
-    cout<< "***************" <<endl;
-    cout<< endl;
+    cout << ">>>LOGOWANIE<<<" << endl;
+    cout << "***************" << endl;
+    cout << endl;
     string userName, userPassword;
-    cout<< "Podaj login: ";
-    cin>> userName;
+    cout << "Podaj login: ";
+    cin >> userName;
     for (auto index = 0; index < singleUser.size(); index ++)
     {
         if (singleUser[index].userName == userName)
         {
-            for(int attempt = 0; attempt < 3; attempt ++)
+            for(auto attempt = 0; attempt < 3; attempt ++)
             {
-                cout<< "Podaj haslo. Pozostalo" << 3 - attempt << "prob: ";
-                cin>> userPassword;
-                cout<< endl;
+                cout<< "Podaj haslo. Pozostalo prob (" << 3 - attempt << "): ";
+                cin >> userPassword;
                 if (singleUser[index].userPassword == userPassword)
                 {
-                    cout<< "Logowanie poprawne" <<endl;
+                    cout << "Logowanie poprawne" << endl;
                     Sleep(1000);
                     return atoi(singleUser[index].userId.c_str());
                 }
             }
-            cout<< "Wprowadzono 3 razy bledne haslo. Zaczekaj 3 sekundy przed nastepna proba..." <<endl;
+            cout << "Wprowadzono 3 razy bledne haslo. Zaczekaj 3 sekundy przed kolejna proba..." << endl;
             Sleep(3000);
             return 0;
         }
     }
-    cout<< "Nie znaleziono uzytkowanika o podanym loginie." <<endl;
+    cout<< "Nie znaleziono uzytkowanika o podanym loginie. Sprobuj ponownie." <<endl;
     Sleep(1500);
     return 0;
 }
 
 void ChangeUserPassword (vector<User> &singleUser, int &loggedUserId)
 {
-system("cls");
+    system("cls");
     cout<< ">>>ZMIANA HASLA<<<" <<endl;
     cout<< "******************" <<endl;
     cout<< endl;
@@ -248,8 +239,8 @@ system("cls");
         for(int index = 0; index < singleUser.size(); index++)
         {
             DatabaseUser<< singleUser[index].userId + "|"
-                            + singleUser[index].userName + "|"
-                            + singleUser[index].userPassword + "|";
+                        + singleUser[index].userName + "|"
+                        + singleUser[index].userPassword + "|";
             DatabaseUser <<endl;
         }
         DatabaseUser.close();
@@ -258,9 +249,9 @@ system("cls");
     }
 }
 
-void ImportContactsForLoggedUser (vector <Person> &singlePerson, int &loggedUserId)
+void ImportAllContacts (vector <Contact> &singleContact)
 {
-    Person individualPerson;
+    Contact individualContact;
     string personalData;
     fstream DatabaseContact;
     DatabaseContact.open("Kontakty.txt", ios :: in);
@@ -270,7 +261,7 @@ void ImportContactsForLoggedUser (vector <Person> &singlePerson, int &loggedUser
         while(getline(DatabaseContact,personalData))
         {
             string individualPersonalData;
-            auto singlePersonNumber = 1;
+            auto singleContactNumber = 1;
 
             for (auto index = 0; index < personalData.length(); index ++)
             {
@@ -280,141 +271,218 @@ void ImportContactsForLoggedUser (vector <Person> &singlePerson, int &loggedUser
                 }
                 else
                 {
-                    switch(singlePersonNumber)
+                    switch(singleContactNumber)
                     {
                     case 1:
-                        individualPerson.contactId = individualPersonalData;
+                        individualContact.contactId = individualPersonalData;
                         break;
                     case 2:
-                        individualPerson.userId = individualPersonalData;
+                        individualContact.userId = individualPersonalData;
                         break;
                     case 3:
-                        individualPerson.name = individualPersonalData;
+                        individualContact.contactName = individualPersonalData;
                         break;
                     case 4:
-                        individualPerson.lastName = individualPersonalData;
+                        individualContact.contactLastName = individualPersonalData;
                         break;
                     case 5:
-                        individualPerson.phoneNumber = individualPersonalData;
+                        individualContact.contactPhoneNumber = individualPersonalData;
                         break;
                     case 6:
-                        individualPerson.eMail = individualPersonalData;
+                        individualContact.contactEmail = individualPersonalData;
                         break;
                     case 7:
-                        individualPerson.adress = individualPersonalData;
+                        individualContact.contactAddress = individualPersonalData;
                         break;
                     }
                     individualPersonalData = "";
-                    singlePersonNumber ++;
+                    singleContactNumber ++;
                 }
             }
-            singlePerson.push_back(individualPerson);
+            singleContact.push_back(individualContact);
         }
     }
     DatabaseContact.close();
 }
 
-void ExportContactIntoFile (vector <Person> &singlePerson )
+int ReturnLastContactNumber (vector <Contact> singleContact)
+{
+    ImportAllContacts(singleContact);
+    if (singleContact.empty() == true )
+        return 0;
+    else
+    {
+        auto lastContactNumber = singleContact.size() - 1;
+        return atoi(singleContact[lastContactNumber].contactId.c_str());
+    }
+}
+
+void ImportContactsForLoggedUser (vector <Contact> &singleContact, int &loggedUserId)
+{
+    Contact individualContact;
+    string personalData;
+    fstream DatabaseContact;
+    DatabaseContact.open("Kontakty.txt", ios :: in);
+
+    if (DatabaseContact.good() == true)
+    {
+        while(getline(DatabaseContact,personalData))
+        {
+            string individualPersonalData;
+            auto singleContactNumber = 1;
+
+            for (auto index = 0; index < personalData.length(); index ++)
+            {
+                if (personalData[index] != '|')
+                {
+                    individualPersonalData += personalData[index];
+                }
+                else
+                {
+                    switch(singleContactNumber)
+                    {
+                    case 1:
+                        individualContact.contactId = individualPersonalData;
+                        break;
+                    case 2:
+                        individualContact.userId = individualPersonalData;
+                        break;
+                    case 3:
+                        individualContact.contactName = individualPersonalData;
+                        break;
+                    case 4:
+                        individualContact.contactLastName = individualPersonalData;
+                        break;
+                    case 5:
+                        individualContact.contactPhoneNumber = individualPersonalData;
+                        break;
+                    case 6:
+                        individualContact.contactEmail = individualPersonalData;
+                        break;
+                    case 7:
+                        individualContact.contactAddress = individualPersonalData;
+                        break;
+                    }
+                    individualPersonalData = "";
+                    singleContactNumber ++;
+                }
+            }
+            if (individualContact.userId == intToString(loggedUserId))
+                singleContact.push_back(individualContact);
+            else continue;
+        }
+    }
+    DatabaseContact.close();
+}
+
+void ExportContactIntoFile (vector <Contact> &singleContactForExport )
 {
     fstream DatabaseContact;
     DatabaseContact.open("Kontakty.txt",ios :: out | ios :: app);
     if (DatabaseContact.good() == true)
     {
-        for (auto index = 0; index < singlePerson.size(); index ++)
+        for (auto index = 0; index < singleContactForExport.size(); index ++)
         {
-            DatabaseContact << singlePerson[index].contactId + "|" + singlePerson[index].userId + "|"
-                            + singlePerson[index].name + "|" + singlePerson[index].lastName
-                            + "|" + singlePerson[index].phoneNumber + "|" + singlePerson[index].eMail
-                            + "|" + singlePerson[index].adress + "|";
+            DatabaseContact << singleContactForExport[index].contactId + "|" + singleContactForExport[index].userId + "|"
+                            + singleContactForExport[index].contactName + "|" + singleContactForExport[index].contactLastName
+                            + "|" + singleContactForExport[index].contactPhoneNumber + "|" + singleContactForExport[index].contactEmail
+                            + "|" + singleContactForExport[index].contactAddress + "|";
             DatabaseContact << endl;
 
         }
-    DatabaseContact.close();
+        DatabaseContact.close();
     }
     cout << "Dodano nowy kontakt" << endl;
     Sleep(1000);
 }
 
-void AddNewContact (vector<Person>& singlePerson, int &loggedUserId)
+void AddNewContact (vector<Contact>& singleContact, int &loggedUserId)
 {
     system("cls");
     cout << ">>>DODAJ NOWY KONTAKT<<<" << endl;
     cout << "************************" << endl;
 
-    ofstream DatabaseContact( "Kontakty.txt" );
-    Person individualPerson;
-    string name, lastName, phoneNumber, eMail, adress;
-    int contactNumber = ReturnLastContactNumber(singlePerson)+1;
-    string IdNumber = intToString(contactNumber);
-    cout << "Podaj imie: ";
-    cin >> name;
-    cout << "Podaj nazwisko: ";
-    cin >> lastName;
-    cout << "Podaj numer telefonu: ";
-    cin >> phoneNumber;
-    cout << "Podaj adres e-mail: ";
-    cin >> eMail;
-    cout << "Podaj adres (ulica, kod pocztowy, miasto): ";
-    cin.ignore();
-    getline(cin, adress);
+    if(fileExists("Kontakty.txt") == false) ofstream DatabaseContact( "Kontakty.txt" );
+    else
+    {
+        Contact individualContact;
+        vector<Contact> singleContactForExport;
+        string contactName, contactLastName, contactPhoneNumber, contactEmail, contactAddress;
+        int contactNumber = ReturnLastContactNumber(singleContact)+1;
+        string IdNumber = intToString(contactNumber);
+        cout << "Podaj imie: ";
+        cin >> contactName;
+        cout << "Podaj nazwisko: ";
+        cin >> contactLastName;
+        cout << "Podaj numer telefonu: ";
+        cin >> contactPhoneNumber;
+        cout << "Podaj adres e-mail: ";
+        cin >> contactEmail;
+        cout << "Podaj adres (ulica, kod pocztowy, miasto): ";
+        cin.ignore();
+        getline(cin, contactAddress);
 
-    individualPerson.contactId = IdNumber;
-    individualPerson.userId = loggedUserId;
-    individualPerson.name = name;
-    individualPerson.lastName = lastName;
-    individualPerson.phoneNumber = phoneNumber;
-    individualPerson.eMail = eMail;
-    individualPerson.adress = adress;
+        individualContact.contactId = IdNumber;
+        individualContact.userId = intToString(loggedUserId);
+        individualContact.contactName = contactName;
+        individualContact.contactLastName = contactLastName;
+        individualContact.contactPhoneNumber = contactPhoneNumber;
+        individualContact.contactEmail = contactEmail;
+        individualContact.contactAddress = contactAddress;
 
-    singlePerson.push_back(individualPerson);
+        singleContactForExport.push_back(individualContact);
 
-    ExportContactIntoFile(singlePerson);
+        ExportContactIntoFile(singleContactForExport);
+        singleContactForExport.clear();
+    }
 }
 
-void SearchByName (vector <Person> & singlePerson, string nameToSearch)
+void SearchByName (vector <Contact> & singleContact, string nameToSearch)
 {
     system("cls");
     cout << ">>>WYSZUKAJ KONTAKT PO IMIENIU<<<" << endl;
     cout << "*********************************" << endl;
     cout << endl;
 
-    cout << "Podaj imie: " << endl;
+    cout << "Podaj imie: ";
     cin >> nameToSearch;
-    for (auto index = 0; index < singlePerson.size(); index ++)
+    for (auto index = 0; index < singleContact.size(); index ++)
     {
-        if (singlePerson[index].name == nameToSearch)
+        if (singleContact[index].contactName == nameToSearch)
         {
-            cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-            cout << singlePerson[index].phoneNumber << " " << endl;
-            cout << singlePerson[index].eMail << " " << endl;
-            cout << singlePerson[index].adress << " " << endl;
+            cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
+            cout << singleContact[index].contactPhoneNumber << " " << endl;
+            cout << singleContact[index].contactEmail << " " << endl;
+            cout << singleContact[index].contactAddress << " " << endl;
         }
     }
-    system("pause");
+    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    getch();
 }
 
-void SearchByLastName (vector <Person> & singlePerson, string lastNameToSearch)
+void SearchByLastName (vector <Contact> & singleContact, string lastNameToSearch)
 {
     system("cls");
     cout << ">>>WYSZUKAJ KONTAKT PO NAZWISKU<<<" << endl;
     cout << "**********************************" << endl;
     cout << endl;
-    cout << "Podaj nazwisko: " << endl;
+    cout << "Podaj nazwisko: ";
     cin >> lastNameToSearch;
-    for (auto index = 0; index < singlePerson.size(); index ++)
+    for (auto index = 0; index < singleContact.size(); index ++)
     {
-        if (singlePerson[index].lastName == lastNameToSearch)
+        if (singleContact[index].contactLastName == lastNameToSearch)
         {
-            cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-            cout << singlePerson[index].phoneNumber << " " << endl;
-            cout << singlePerson[index].eMail << " " << endl;
-            cout << singlePerson[index].adress << " " << endl;
+            cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
+            cout << singleContact[index].contactPhoneNumber << " " << endl;
+            cout << singleContact[index].contactEmail << " " << endl;
+            cout << singleContact[index].contactAddress << " " << endl;
         }
     }
-    system("pause");
+    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    getch();
 }
 
-void SearchForAContact (vector <Person> &singlePerson)
+void SearchForAContact (vector <Contact> &singleContact)
 {
     string nameToSearch, lastNameToSearch;
     int userSelect;
@@ -434,14 +502,14 @@ void SearchForAContact (vector <Person> &singlePerson)
     {
         switch(userSelect)
         {
-            case 1:
-                SearchByName (singlePerson, nameToSearch);
-                break;
-            case 2:
-                SearchByLastName (singlePerson, lastNameToSearch);
-                break;
-            case 3:
-                break;
+        case 1:
+            SearchByName (singleContact, nameToSearch);
+            break;
+        case 2:
+            SearchByLastName (singleContact, lastNameToSearch);
+            break;
+        case 3:
+            break;
         }
     }
     else
@@ -451,75 +519,79 @@ void SearchForAContact (vector <Person> &singlePerson)
     }
 }
 
-void ViewAllContacts (vector <Person> &singlePerson)
+void ViewAllContacts (vector <Contact> &singleContact, int &loggedUserId)
 {
     system("cls");
     cout << ">>>LISTA WSZYSTKICH KONTAKTOW<<<" << endl;
     cout << "********************************" << endl;
 
-    for (auto index = 0; index < singlePerson.size(); index ++)
+    for (auto index = 0; index < singleContact.size(); index ++)
     {
-        cout << singlePerson[index].contactId << endl;
-        cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-        cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
-        cout << singlePerson[index].adress << " " << endl;
+        if (singleContact[index].userId == intToString(loggedUserId))
+        {
+         cout << singleContact[index].contactId << endl;
+         cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
+         cout << singleContact[index].contactPhoneNumber << " " << singleContact[index].contactEmail << " " << endl;
+         cout << singleContact[index].contactAddress << " " << endl;
+        }
     }
-    system("pause");
+    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    getch();
 }
 
-void updateDatabaseContactFile(vector <Person> &singlePerson)
+void updateDatabaseContactFile(vector <Contact> &singleContact)
 {
-  fstream DatabaseContact;
-        DatabaseContact.open("Kontakty.txt",ios::out);
-        if (DatabaseContact.good() == true)
+    fstream DatabaseContact;
+    DatabaseContact.open("Kontakty.txt",ios::out);
+    if (DatabaseContact.good() == true)
+    {
+        for(auto index = 0; index < singleContact.size(); index ++)
         {
-            for(auto index = 0; index < singlePerson.size(); index ++)
-            {
-                DatabaseContact << singlePerson[index].contactId + "|" + singlePerson[index].userId + "|"
-                             + singlePerson[index].name + "|" + singlePerson[index].lastName
-                             + "|" + singlePerson[index].phoneNumber + "|" + singlePerson[index].eMail
-                             + "|" + singlePerson[index].adress + "|";
-                DatabaseContact << endl;
-            }
-            DatabaseContact.close();
-            cout << "Kontakt zostal zmieniony!" << endl;
-            Sleep(1500);
+            DatabaseContact << singleContact[index].contactId + "|" + singleContact[index].userId + "|"
+                            + singleContact[index].contactName + "|" + singleContact[index].contactLastName
+                            + "|" + singleContact[index].contactPhoneNumber + "|" + singleContact[index].contactEmail
+                            + "|" + singleContact[index].contactAddress + "|";
+            DatabaseContact << endl;
         }
-        else
-        {
-            cout << "Nie udalo sie zmienic kontaktu!" << endl;
-            Sleep(1500);
-        }
+        DatabaseContact.close();
+        cout << "Kontakt zostal zmieniony!" << endl;
+        Sleep(1500);
+    }
+    else
+    {
+        cout << "Nie udalo sie zmienic kontaktu!" << endl;
+        Sleep(1500);
+    }
 }
 
-void ContactEdition(vector <Person> &singlePerson, int &loggedUserId)
+void ContactEdition(vector <Contact> &singleContact, int &loggedUserId)
 {
-    system("cls");
-    cout << ">>>EDYCJA WYBRANEGO KONTAKTU<<<" << endl;
-    cout << "*******************************" << endl;
+    singleContact.clear();
+    ImportAllContacts(singleContact);
+    ViewAllContacts(singleContact,loggedUserId);
     cout << endl;
-
     string newPhoneNumber, newEmail, newAdress;
     int contactNumberToBeChanged = 0;
-    cout<< "Podaj numer kontaktu, ktory chcesz edytowac: ";
-    cin>> contactNumberToBeChanged;
-    int positionInVector = FindPositionInVector(singlePerson, contactNumberToBeChanged);
-    if ((checkIfContactExists(singlePerson, contactNumberToBeChanged) == true ) && (singlePerson[positionInVector].userId == intToString(loggedUserId)))
+    cout << "Podaj numer kontaktu, ktory chcesz edytowac: " << endl;
+    cin >> contactNumberToBeChanged;
+    int positionInVector = FindPositionInVector(singleContact, contactNumberToBeChanged);
+    if ((checkIfContactExists(singleContact, contactNumberToBeChanged) == true ) && (singleContact[positionInVector].userId == intToString(loggedUserId)))
     {
-        for(auto index = 0; index < singlePerson.size(); index ++)
+        for(auto index = 0; index < singleContact.size(); index ++)
         {
-            if (singlePerson[index].contactId == intToString(contactNumberToBeChanged))
+            if (singleContact[index].contactId == intToString(contactNumberToBeChanged))
             {
-                cout << singlePerson[index].name << " " << singlePerson[index].lastName << " " << endl;
-                cout << singlePerson[index].phoneNumber << " " << singlePerson[index].eMail << " " << endl;
-                cout << singlePerson[index].adress << " " << endl;
+                cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
+                cout << singleContact[index].contactPhoneNumber << " " << singleContact[index].contactEmail << " " << endl;
+                cout << singleContact[index].contactAddress << " " << endl;
             }
         }
+        cout << endl;
         cout << "Wybierz dane do zmiany: " << endl;
         cout << "1. Numer telefonu" << endl;
         cout << "2. Adres e-mail" << endl;
         cout << "3. Adres zamieszkania" << endl;
-        cout << "4. Powrot do Menu Glownego" << endl;
+        cout << endl;
         int userChoice = 0;
         cin >> userChoice;
         switch(userChoice)
@@ -529,7 +601,7 @@ void ContactEdition(vector <Person> &singlePerson, int &loggedUserId)
             cout << "Podaj nowy numer telefonu: ";
             cin.ignore();
             getline(cin, newPhoneNumber);
-            singlePerson[positionInVector].phoneNumber = newPhoneNumber;
+            singleContact[positionInVector].contactPhoneNumber = newPhoneNumber;
         }
         break;
 
@@ -537,7 +609,7 @@ void ContactEdition(vector <Person> &singlePerson, int &loggedUserId)
         {
             cout << "Podaj nowy adres mailowy: ";
             cin >> newEmail;
-            singlePerson[positionInVector].eMail = newEmail;
+            singleContact[positionInVector].contactEmail = newEmail;
         }
         break;
 
@@ -546,14 +618,11 @@ void ContactEdition(vector <Person> &singlePerson, int &loggedUserId)
             cout << "Podaj nowy adres zamieszkania: ";
             cin.ignore();
             getline(cin, newAdress);
-            singlePerson[positionInVector].adress = newAdress;
+            singleContact[positionInVector].contactAddress = newAdress;
         }
         break;
-
-        case 4:
-            break;
         }
-        updateDatabaseContactFile(singlePerson);
+        updateDatabaseContactFile(singleContact);
     }
     else
     {
@@ -562,8 +631,9 @@ void ContactEdition(vector <Person> &singlePerson, int &loggedUserId)
     }
 }
 
-void RemoveContact(vector <Person> &singlePerson, int &loggedUserId)
+void RemoveContact(vector <Contact> &singleContact, int &loggedUserId)
 {
+    ViewAllContacts(singleContact, loggedUserId);
     system("cls");
     cout << ">>>USUWANIE WYBRANEGO KONTAKTU<<<" << endl;
     cout << "*********************************" << endl;
@@ -573,17 +643,17 @@ void RemoveContact(vector <Person> &singlePerson, int &loggedUserId)
     char userAccept;
     cout << "Podaj numer ID kontaktu, ktory chcesz usunac: ";
     cin >> contactNumberToRemove;
-    if (((checkIfContactExists(singlePerson, contactNumberToRemove)) == true) && (singlePerson[contactNumberToRemove-1].userId == intToString(loggedUserId)))
+    if (((checkIfContactExists(singleContact, contactNumberToRemove)) == true) && (singleContact[contactNumberToRemove-1].userId == intToString(loggedUserId)))
     {
-        for (auto index = 0; index != singlePerson.size(); index ++ )
+        for (auto index = 0; index != singleContact.size(); index ++ )
         {
-            if (intToString(contactNumberToRemove) == singlePerson[index].contactId)
+            if (intToString(contactNumberToRemove) == singleContact[index].contactId)
             {
-                cout << singlePerson[index].name << " " << endl;
-                cout << singlePerson[index].lastName << " " << endl;
-                cout << singlePerson[index].phoneNumber << " " << endl;
-                cout << singlePerson[index].eMail << " " << endl;
-                cout << singlePerson[index].adress << " " << endl;
+                cout << singleContact[index].contactName << " " << endl;
+                cout << singleContact[index].contactLastName << " " << endl;
+                cout << singleContact[index].contactPhoneNumber << " " << endl;
+                cout << singleContact[index].contactEmail << " " << endl;
+                cout << singleContact[index].contactAddress << " " << endl;
 
                 cout << "Wcisnij 't' aby potwierdzic usuniecie wybranego adresata: ";
                 cin >> userAccept;
@@ -606,7 +676,8 @@ void RemoveContact(vector <Person> &singlePerson, int &loggedUserId)
                 else
                 {
                     cout << "Wybrany kontakt nie zostal usuniety" << endl;
-                    system("pause");
+                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    getch();
                 }
             }
         }
@@ -625,20 +696,17 @@ int main()
     while (true)
     {
         vector <User> singleUser;
-        if(fileExists("Uzytkownicy.txt"))
-        {
-            ImportAllUsers (singleUser);
-        }
+        if(fileExists("Uzytkownicy.txt") == true)  ImportAllUsers (singleUser);
 
         if (loggedUserId == 0)
         {
             system("cls");
-            cout << "\t**********************************************" << endl;
+            cout << "\t******************************************" << endl;
             cout << "\t>>>>>>>>>>> KSIAZKA ADRESOWA <<<<<<<<<<<<<" << endl;
-            cout << "\t**********************************************" << endl << endl;
-            cout << "\t************ 1.REJESTRACJA ************" << endl;
-            cout << "\t************* 2.LOGOWANIE **************" << endl;
-            cout << "\t************** 3.WYJSCIE ********" << endl;
+            cout << "\t******************************************" << endl << endl;
+            cout << "\t************ 1.REJESTRACJA ***************" << endl;
+            cout << "\t************* 2.LOGOWANIE ****************" << endl;
+            cout << "\t************** 3.WYJSCIE *****************" << endl;
             cout << endl;
             cout << "Prosze wybrac opcje ==> ";
             int userSelection;
@@ -646,33 +714,38 @@ int main()
 
             switch (userSelection)
             {
-                case 1:
+            case 1:
+            {
+                RegisterNewUser(singleUser);
+            }
+            break;
+            case 2:
+            {
+                if (singleUser.empty() == true)
                 {
-                    RegisterNewUser(singleUser);
+                    cout << "Brak zarejestrowanych uzytkownikow !";
+                    Sleep(2000);
                 }
-                break;
-                case 2:
-                {
-                    LoggTheUserIn (singleUser);
-                }
-                break;
+                else loggedUserId = LoggTheUserIn (singleUser);
+            }
+            break;
 
-                case 3:
-                {
-                    cout << "Nastapi zamkniecie programu...";
-                    Sleep(1500);
-                    exit(0);
-                }
-                break;
+            case 3:
+            {
+                cout << "Nastapi zamkniecie programu...";
+                Sleep(1500);
+                exit(0);
+            }
+            break;
             }
         }
         else
         {
-            vector <Person> singlePerson;
+            vector <Contact> singleContact;
 
             if(fileExists("Kontakty.txt"))
             {
-                ImportContactsForLoggedUser(singlePerson, loggedUserId);
+                ImportContactsForLoggedUser(singleContact, loggedUserId);
             }
             system("cls");
             cout << "\t**********************************************" << endl;
@@ -684,7 +757,7 @@ int main()
             cout << "\t************ 4.EDYCJA KONTAKTU ***************" << endl;
             cout << "\t************* 5.USUN KONTAKT *****************" << endl;
             cout << "\t************* 6.ZMIANA HASLA *****************" << endl;
-            cout << "\t************** 7.ZAKONCZ *********************" << endl;
+            cout << "\t************** 7.WYLOGUJ *********************" << endl;
             cout << endl;
             cout << "Prosze wybrac opcje ==> ";
             int userSelect;
@@ -694,62 +767,67 @@ int main()
             switch (userSelect)
             {
             case 1:
-                AddNewContact(singlePerson, loggedUserId);
-            break;
+                AddNewContact(singleContact, loggedUserId);
+                break;
 
             case 2:
             {
-                if (singlePerson.empty() == true)
+                if (singleContact.empty() == true)
                 {
                     cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    system("pause");
+                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    getch();
                 }
-                else SearchForAContact (singlePerson);
+                else SearchForAContact (singleContact);
             }
             break;
 
             case 3:
             {
-                if (singlePerson.empty() == true)
+                if (singleContact.empty() == true)
                 {
                     cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    system("pause");
+                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    getch();
                 }
-                else ViewAllContacts (singlePerson);
+                else ViewAllContacts (singleContact, loggedUserId);
             }
             break;
 
             case 4:
             {
-                if (singlePerson.empty() == true)
+                if (singleContact.empty() == true)
                 {
                     cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    system("pause");
+                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    getch();
                 }
-                else  ContactEdition(singlePerson, loggedUserId);
+                else  ContactEdition(singleContact, loggedUserId);
             }
             break;
 
             case 5:
             {
-                if (singlePerson.empty() == true)
+                if (singleContact.empty() == true)
                 {
                     cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    system("pause");
+                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    getch();
                 }
-                else RemoveContact (singlePerson, loggedUserId);
+                else RemoveContact (singleContact, loggedUserId);
             }
             break;
 
             case 6:
                 ChangeUserPassword(singleUser, loggedUserId);
-            break;
+                break;
 
             case 7:
             {
-                cout << "Nastapi zamkniecie programu...";
+                loggedUserId = 0;
+                cout << "Wylogowales sie.";
                 Sleep(1500);
-                return 0;
+                break;
             }
             }
         }
