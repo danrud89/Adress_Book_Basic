@@ -19,7 +19,15 @@ class User
     string userName;
     string userPassword;
 
-    User(string id, string name, string password);
+public:
+    User(string userId, string userName, string userPassword);
+    void setId(int newId);
+    void setName(string newName);
+    void setPassword(string newPassword);
+
+    string getId();
+    string getName();
+    string getPassword();
 };
 
 #endif

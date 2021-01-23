@@ -1,34 +1,15 @@
 #include <iostream>
 #include "users.h"
 #include "UserMenager.h"
+#include "auxiliaryMethods.h"
 
 using namespace std;
 
-User::User(string uid, string name, string password)
+User::User(string userId, string userName, string userPassword)
 {
-    userId = uid;
-    userName = name;
-    userPassword = password;
-}
-
-bool UserMenager::fileExists (const string& fileName)
-{
-    fstream Database;
-    Database.open(fileName.c_str(), ios::in);
-    if ( Database.is_open() )
-    {
-        Database.close();
-        return true;
-    }
-    Database.close();
-    return false;
-}
-
-string UserMenager::intToString(int IdNumber)
-{
-    ostringstream ss;
-    ss << IdNumber;
-    return  ss.str();
+    this -> userId = userId;
+    this -> userName = userName;
+    this -> userPassword = userPassword;
 }
 
 void UserMenager::ImportAllUsers(vector <User> &singleUser)
@@ -93,7 +74,7 @@ void UserMenager::ExportNewUser (vector<User>& singleUser)
         DatabaseUser.close();
         singleUser.clear();
         cout<< endl;
-        cout<< "Dodano nowego uzytkownika." <<endl;
+        cout<< auxiliaryMethods::PL("Dodano nowego u¿ytkownika.") <<endl;
         Sleep(1500);
     }
     else
@@ -106,29 +87,29 @@ void UserMenager::ExportNewUser (vector<User>& singleUser)
 void UserMenager::RegisterNewUser(vector <User> &singleUser)
 {
     system("cls");
-    cout<< ">>>REJESTRACJA NOWEGO UZYTKOWNIKA<<<" <<endl;
+    cout<< auxiliaryMethods::PL(">>>REJESTRACJA NOWEGO U¯YTKOWNIKA<<<") <<endl;
     cout<< "************************************" <<endl;
     cout<< endl;
 
     vector <User> singleUserForExport;
-    if(fileExists("Uzytkownicy.txt") == false) ofstream DatabaseUser( "Uzytkownicy.txt" );
+    if(auxiliaryMethods::fileExists("Uzytkownicy.txt") == false) ofstream DatabaseUser( "Uzytkownicy.txt" );
     else
     {
         string userName, userPassword, userId;
-        cout<< "Podaj nazwe uzytkownika: ";
+        cout<< auxiliaryMethods::PL("Podaj nazwê u¿ytkownika: ");
         cin>> userName;
         for (auto index = 0; index < singleUser.size(); index ++)
         {
             if (singleUser[index].userName == userName)
             {
-                cout << "Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ";
+                cout << auxiliaryMethods::PL("U¿ytkownik o takiej nazwie ju¿ istnieje! Podaj inn¹ nazwê: ");
                 cin >> userName;
                 index = 0;
             }
         }
-        cout<< "Podaj haslo: ";
+        cout<< auxiliaryMethods::PL("Podaj has³o: ");
         cin>> userPassword;
-        userId = intToString(singleUser.size() + 1);
+        userId = auxiliaryMethods::intToString(singleUser.size() + 1);
 
         singleUserForExport.push_back(User(userId, userName, userPassword));
         UserMenager exportUser;
@@ -152,7 +133,7 @@ int UserMenager::LoggTheUserIn (vector <User> &singleUser)
         {
             for(auto attempt = 0; attempt < 3; attempt ++)
             {
-                cout<< "Podaj haslo. Pozostalo prob (" << 3 - attempt << "): ";
+                cout<< auxiliaryMethods::PL("Podaj has³o. Pozosta³o prób")<<" "<<"("<<(3 - attempt)<<")" <<": " ;
                 cin >> userPassword;
                 if (singleUser[index].userPassword == userPassword)
                 {
@@ -161,12 +142,12 @@ int UserMenager::LoggTheUserIn (vector <User> &singleUser)
                     return atoi(singleUser[index].userId.c_str());
                 }
             }
-            cout << "Wprowadzono 3 razy bledne haslo. Zaczekaj 3 sekundy przed kolejna proba..." << endl;
+            cout << auxiliaryMethods::PL("Wprowadzono 3 razy b³êdne has³o. Zaczekaj 3 sekundy przed kolejn¹ prób¹...") << endl;
             Sleep(3000);
             return 0;
         }
     }
-    cout<< "Nie znaleziono uzytkowanika o podanym loginie. Sprobuj ponownie." <<endl;
+    cout<< auxiliaryMethods::PL("Nie znaleziono u¿ytkowanika o podanym loginie. Spróbuj ponownie.") <<endl;
     Sleep(1500);
     return 0;
 }
@@ -174,15 +155,15 @@ int UserMenager::LoggTheUserIn (vector <User> &singleUser)
 void UserMenager::ChangeUserPassword (vector<User> &singleUser, int &loggedUserId)
 {
     system("cls");
-    cout<< ">>>ZMIANA HASLA<<<" <<endl;
+    cout<< auxiliaryMethods::PL(">>>ZMIANA HAS£A<<<") <<endl;
     cout<< "******************" <<endl;
     cout<< endl;
     string newUserPassword;
-    cout<< "Podaj nowe haslo: ";
+    cout<< auxiliaryMethods::PL("Podaj nowe has³o: ");
     cin>> newUserPassword;
     for(auto index = 0; index < singleUser.size(); index++)
     {
-        if (singleUser[index].userId == intToString(loggedUserId))
+        if (singleUser[index].userId == auxiliaryMethods::intToString(loggedUserId))
         {
             singleUser[index].userPassword = newUserPassword;
         }
@@ -199,7 +180,7 @@ void UserMenager::ChangeUserPassword (vector<User> &singleUser, int &loggedUserI
             DatabaseUser <<endl;
         }
         DatabaseUser.close();
-        cout<< "Haslo zmienione!" <<endl;
+        cout<< auxiliaryMethods::PL("Has³o zmienione!") <<endl;
         Sleep(1500);
     }
 }

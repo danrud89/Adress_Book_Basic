@@ -3,7 +3,7 @@
 #include "contacts.h"
 #include "ContactMenager.h"
 #include "UserMenager.h"
-
+#include "auxiliaryMethods.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ int main()
     while (true)
     {
         vector <User> singleUser;
-        if(fileExists("Uzytkownicy.txt") == true)
+        if(auxiliaryMethods::fileExists("Uzytkownicy.txt") == true)
         {
             UserMenager import;
             import.ImportAllUsers(singleUser);
@@ -24,13 +24,13 @@ int main()
         {
             system("cls");
             cout << "\t******************************************" << endl;
-            cout << "\t>>>>>>>>>>> KSIAZKA ADRESOWA <<<<<<<<<<<<<" << endl;
+            cout << auxiliaryMethods::PL("\t>>>>>>>>>>> KSI¥¯KA ADRESOWA <<<<<<<<<<<<<") << endl;
             cout << "\t******************************************" << endl << endl;
             cout << "\t************ 1.REJESTRACJA ***************" << endl;
             cout << "\t************* 2.LOGOWANIE ****************" << endl;
-            cout << "\t************** 3.WYJSCIE *****************" << endl;
+            cout << auxiliaryMethods::PL("\t************** 3.WYJŒCIE *****************") << endl;
             cout << endl;
-            cout << "Prosze wybrac opcje ==> ";
+            cout << auxiliaryMethods::PL("Proszê wybraæ opcjê ==> ");
             int userSelection;
             cin >> userSelection;
 
@@ -46,7 +46,7 @@ int main()
             {
                 if (singleUser.empty() == true)
                 {
-                    cout << "Brak zarejestrowanych uzytkownikow !";
+                    cout << auxiliaryMethods::PL("Brak zarejestrowanych u¿ytkowników !");
                     Sleep(2000);
                 }
                 else
@@ -54,13 +54,12 @@ int main()
                     UserMenager login;
                     loggedUserId = login.LoggTheUserIn(singleUser);
                 }
-
             }
             break;
 
             case 3:
             {
-                cout << "Nastapi zamkniecie programu...";
+                cout << auxiliaryMethods::PL("Nast¹pi zamkniêcie programu...");
                 Sleep(1500);
                 exit(0);
             }
@@ -71,24 +70,24 @@ int main()
         {
             vector <Contact> singleContact;
 
-            if(fileExists("Kontakty.txt") == true)
+            if(auxiliaryMethods::fileExists("Kontakty.txt") == true)
             {
                 ContactMenager import;
                 import.ImportContactsForLoggedUser(singleContact, loggedUserId);
             }
             system("cls");
             cout << "\t**********************************************" << endl;
-            cout << "\t>>>>>>>>>>>>>>> MENU GLOWNE <<<<<<<<<<<<<" << endl;
+            cout << auxiliaryMethods::PL("\t>>>>>>>>>>>>>>> MENU G£ÓWNE <<<<<<<<<<<<<") << endl;
             cout << "\t**********************************************" << endl << endl;
             cout << "\t************ 1.DODAJ NOWY KONTAKT ************" << endl;
             cout << "\t************ 2.WYSZUKAJ KONTAKT **************" << endl;
-            cout << "\t******* 3.WYSWIETL WSZYSTKIE KONTAKTY ********" << endl;
+            cout << auxiliaryMethods::PL("\t******* 3.WYŒWIETL WSZYSTKIE KONTAKTY ********") << endl;
             cout << "\t************ 4.EDYCJA KONTAKTU ***************" << endl;
-            cout << "\t************* 5.USUN KONTAKT *****************" << endl;
-            cout << "\t************* 6.ZMIANA HASLA *****************" << endl;
+            cout << auxiliaryMethods::PL("\t************* 5.USUÑ KONTAKT *****************") << endl;
+            cout << auxiliaryMethods::PL("\t************* 6.ZMIANA HAS£A *****************") << endl;
             cout << "\t************** 7.WYLOGUJ *********************" << endl;
             cout << endl;
-            cout << "Prosze wybrac opcje ==> ";
+            cout << auxiliaryMethods::PL("Proszê wybraæ opcjê ==> ");
             int userSelect;
             cin >> userSelect;
 
@@ -105,8 +104,8 @@ int main()
             {
                 if (singleContact.empty() == true)
                 {
-                    cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    cout << auxiliaryMethods::PL("Ksi¹¿ka adresowa jest pusta. Dodaj nowy kontakt") << endl;
+                    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
                     getch();
                 }
                 else
@@ -121,8 +120,8 @@ int main()
             {
                 if (singleContact.empty() == true)
                 {
-                    cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    cout << auxiliaryMethods::PL("Ksi¹¿ka adresowa jest pusta. Dodaj nowy kontakt") << endl;
+                    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
                     getch();
                 }
                 else
@@ -137,8 +136,8 @@ int main()
             {
                 if (singleContact.empty() == true)
                 {
-                    cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    cout << auxiliaryMethods::PL("Ksi¹¿ka adresowa jest pusta. Dodaj nowy kontakt") << endl;
+                    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
                     getch();
                 }
                 else
@@ -153,8 +152,8 @@ int main()
             {
                 if (singleContact.empty() == true)
                 {
-                    cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    cout << auxiliaryMethods::PL("Ksi¹¿ka adresowa jest pusta. Dodaj nowy kontakt") << endl;
+                    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
                     getch();
                 }
                 else
@@ -175,7 +174,7 @@ int main()
             case 7:
             {
                 loggedUserId = 0;
-                cout << "Wylogowales sie.";
+                cout << auxiliaryMethods::PL("Wylogowa³eœ siê.");
                 Sleep(1500);
                 break;
             }

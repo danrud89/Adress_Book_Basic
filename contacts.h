@@ -23,8 +23,25 @@ class Contact
     string contactEmail;
     string contactAddress;
 
-    Contact(string id, string uid, string name, string surname, string phone,
-            string email , string address );
+    public:
+    Contact(string contactId, string userId, string contactName, string contactLastName, string contactPhoneNumber,
+            string contactEmail , string contactAddress );
+
+    void setContactId(int newId);
+    void setUserId(string );
+    void setContactName(string newName);
+    void setContactLastName(string newLastName);
+    void setContactPhoneNumer(string newPhoneNumber);
+    void setContactEmail(string newEmail);
+    void setContactAddress(string newAddress);
+
+    string getContactId();
+    string getUserId();
+    string getContactName();
+    string getContactLastName();
+    string getContactPhoneNumber();
+    string getContactEmail();
+    string getContactAddress();
 };
 
 #endif

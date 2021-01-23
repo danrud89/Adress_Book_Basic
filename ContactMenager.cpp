@@ -2,37 +2,20 @@
 #include "contacts.h"
 #include "users.h"
 #include "ContactMenager.h"
+#include "auxiliaryMethods.h"
 
 using namespace std;
 
-Contact::Contact(string id, string uid, string name, string surname, string phone, string email , string address)
+Contact::Contact(string contactId, string userId, string contactName, string contactLastName,
+                 string contactPhoneNumber, string contactEmail , string contactAddress)
 {
-    contactId = id;
-    userId = uid;
-    contactName = name;
-    contactLastName = surname;
-    contactPhoneNumber = phone;
-    contactEmail = email;
-    contactAddress = address;
-}
-bool ContactMenager::fileExists (const string& fileName)
-{
-    fstream Database;
-    Database.open(fileName.c_str(), ios::in);
-    if ( Database.is_open() )
-    {
-        Database.close();
-        return true;
-    }
-    Database.close();
-    return false;
-}
-
-string ContactMenager::intToString(int IdNumber)
-{
-    ostringstream ss;
-    ss << IdNumber;
-    return  ss.str();
+    this -> contactId = contactId;
+    this -> userId = userId;
+    this -> contactName = contactName;
+    this -> contactLastName = contactLastName;
+    this -> contactPhoneNumber = contactPhoneNumber;
+    this -> contactEmail = contactEmail;
+    this -> contactAddress = contactAddress;
 }
 
 bool ContactMenager::checkIfContactExists(vector <Contact> singleContact, int contactNumberToBeChanged)
@@ -42,7 +25,7 @@ bool ContactMenager::checkIfContactExists(vector <Contact> singleContact, int co
     {
         IdNumbersOnly.push_back(singleContact[index].contactId);
     }
-    auto itr = find(IdNumbersOnly.begin(), IdNumbersOnly.end(), intToString(contactNumberToBeChanged));
+    auto itr = find(IdNumbersOnly.begin(), IdNumbersOnly.end(), auxiliaryMethods::intToString(contactNumberToBeChanged));
     if (itr != IdNumbersOnly.end()) return true;
     else return false;
 }
@@ -57,7 +40,7 @@ int ContactMenager::FindPositionInVector (vector <Contact> singleContact, int co
 
     for (auto index = 0; index < IdNumbersOnly.size(); index ++)
     {
-        if (IdNumbersOnly[index] == intToString(contactNumberToBeChanged))
+        if (IdNumbersOnly[index] == auxiliaryMethods::intToString(contactNumberToBeChanged))
             return index;
     }
 }
@@ -185,7 +168,7 @@ void ContactMenager::ImportContactsForLoggedUser (vector <Contact> &singleContac
                     singleContactNumber ++;
                 }
             }
-            if (individualContact[1] == intToString(loggedUserId))
+            if (individualContact[1] == auxiliaryMethods::intToString(loggedUserId))
             {
                 singleContact.push_back(Contact(individualContact[0], individualContact[1],
                                                 individualContact[2], individualContact[3],
@@ -226,16 +209,16 @@ void ContactMenager::AddNewContact (vector<Contact>& singleContact, int &loggedU
     cout << ">>>DODAJ NOWY KONTAKT<<<" << endl;
     cout << "************************" << endl;
 
-    if(fileExists("Kontakty.txt") == false) ofstream DatabaseContact( "Kontakty.txt" );
+    if(auxiliaryMethods::fileExists("Kontakty.txt") == false) ofstream DatabaseContact( "Kontakty.txt" );
     else
     {
         vector<Contact> singleContactForExport;
         string contactName, contactLastName, contactPhoneNumber, contactEmail, contactAddress;
         ContactMenager lastNumber;
         int contactNumber = lastNumber.ReturnLastContactNumber(singleContact)+1;
-        string contactId = intToString(contactNumber);
-        string userId = intToString(loggedUserId);
-        cout << "Podaj imie: ";
+        string contactId = auxiliaryMethods::intToString(contactNumber);
+        string userId = auxiliaryMethods::intToString(loggedUserId);
+        cout << auxiliaryMethods::PL("Podaj imiê: ");
         cin >> contactName;
         cout << "Podaj nazwisko: ";
         cin >> contactLastName;
@@ -263,7 +246,7 @@ void ContactMenager::SearchByName (vector <Contact> & singleContact, string name
     cout << "*********************************" << endl;
     cout << endl;
 
-    cout << "Podaj imie: ";
+    cout << auxiliaryMethods::PL("Podaj imiê: ");
     cin >> nameToSearch;
     for (auto index = 0; index < singleContact.size(); index ++)
     {
@@ -275,7 +258,7 @@ void ContactMenager::SearchByName (vector <Contact> & singleContact, string name
             cout << singleContact[index].contactAddress << " " << endl;
         }
     }
-    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
     getch();
 }
 
@@ -297,7 +280,7 @@ void ContactMenager::SearchByLastName (vector <Contact> & singleContact, string 
             cout << singleContact[index].contactAddress << " " << endl;
         }
     }
-    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
     getch();
 }
 
@@ -312,9 +295,9 @@ void ContactMenager::SearchForAContact (vector <Contact> &singleContact)
     cout << endl;
     cout << "1. >>Wyszukaj po imieniu<<" << endl;
     cout << "2. >>Wyszukaj po nazwisku<<" << endl;
-    cout << "3. >>Powrot do Menu Glownego<<" << endl;
+    cout << auxiliaryMethods::PL("3. >>Powrót do Menu G³ównego<<") << endl;
     cout << endl;
-    cout << "Prosze wybrac opcje: " << endl;
+    cout << auxiliaryMethods::PL("Proszê wybraæ opcjê: ") << endl;
     cin >> userSelect;
 
     if (userSelect == 1 || userSelect == 2 || userSelect == 3)
@@ -333,7 +316,7 @@ void ContactMenager::SearchForAContact (vector <Contact> &singleContact)
     }
     else
     {
-        cout << "Podales niewlasciwa cyfre. Sproboj jeszcze raz." << endl;
+        cout << auxiliaryMethods::PL("Poda³eœ niew³aœciw¹ cyfrê. Spróbuj jeszcze raz.") << endl;
         Sleep(1500);
     }
 }
@@ -341,12 +324,12 @@ void ContactMenager::SearchForAContact (vector <Contact> &singleContact)
 void ContactMenager::ViewAllContacts (vector <Contact> &singleContact, int &loggedUserId)
 {
     system("cls");
-    cout << ">>>LISTA WSZYSTKICH KONTAKTOW<<<" << endl;
+    cout << auxiliaryMethods::PL(">>>LISTA WSZYSTKICH KONTAKTÓW<<<") << endl;
     cout << "********************************" << endl;
 
     for (auto index = 0; index < singleContact.size(); index ++)
     {
-        if (singleContact[index].userId == intToString(loggedUserId))
+        if (singleContact[index].userId == auxiliaryMethods::intToString(loggedUserId))
         {
          cout << singleContact[index].contactId << endl;
          cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
@@ -354,7 +337,7 @@ void ContactMenager::ViewAllContacts (vector <Contact> &singleContact, int &logg
          cout << singleContact[index].contactAddress << " " << endl;
         }
     }
-    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
     getch();
 }
 
@@ -373,12 +356,12 @@ void ContactMenager::updateDatabaseContactFile(vector <Contact> &singleContact)
             DatabaseContact << endl;
         }
         DatabaseContact.close();
-        cout << "Kontakt zostal zmieniony!" << endl;
+        cout << auxiliaryMethods::PL("Kontakt zosta³ zmieniony!") << endl;
         Sleep(1500);
     }
     else
     {
-        cout << "Nie udalo sie zmienic kontaktu!" << endl;
+        cout << auxiliaryMethods::PL("Nie uda³o siê zmieniæ kontaktu!") << endl;
         Sleep(1500);
     }
 }
@@ -392,16 +375,16 @@ void ContactMenager::ContactEdition(vector <Contact> &singleContact, int &logged
     cout << endl;
     string newPhoneNumber, newEmail, newAdress;
     int contactNumberToBeChanged = 0;
-    cout << "Podaj numer kontaktu, ktory chcesz edytowac: " << endl;
+    cout << auxiliaryMethods::PL("Podaj numer kontaktu, który chcesz edytowaæ: ") << endl;
     cin >> contactNumberToBeChanged;
     ContactMenager getPosition;
     ContactMenager existance;
     int positionInVector = getPosition.FindPositionInVector(singleContact, contactNumberToBeChanged);
-    if ((existance.checkIfContactExists(singleContact, contactNumberToBeChanged) == true ) && (singleContact[positionInVector].userId == intToString(loggedUserId)))
+    if ((existance.checkIfContactExists(singleContact, contactNumberToBeChanged) == true ) && (singleContact[positionInVector].userId == auxiliaryMethods::intToString(loggedUserId)))
     {
         for(auto index = 0; index < singleContact.size(); index ++)
         {
-            if (singleContact[index].contactId == intToString(contactNumberToBeChanged))
+            if (singleContact[index].contactId == auxiliaryMethods::intToString(contactNumberToBeChanged))
             {
                 cout << singleContact[index].contactName << " " << singleContact[index].contactLastName << " " << endl;
                 cout << singleContact[index].contactPhoneNumber << " " << singleContact[index].contactEmail << " " << endl;
@@ -429,7 +412,7 @@ void ContactMenager::ContactEdition(vector <Contact> &singleContact, int &logged
 
         case 2:
         {
-            cout << "Podaj nowy adres mailowy: ";
+            cout << "Podaj nowy adres e-mail: ";
             cin >> newEmail;
             singleContact[positionInVector].contactEmail = newEmail;
         }
@@ -464,14 +447,14 @@ void ContactMenager::RemoveContact(vector <Contact> &singleContact, int &loggedU
 
     int contactNumberToRemove = 0;
     char userAccept;
-    cout << "Podaj numer ID kontaktu, ktory chcesz usunac: ";
+    cout << auxiliaryMethods::PL("Podaj numer ID kontaktu, który chcesz usun¹æ: ");
     cin >> contactNumberToRemove;
     ContactMenager existance;
-    if (((existance.checkIfContactExists(singleContact, contactNumberToRemove)) == true) && (singleContact[contactNumberToRemove-1].userId == intToString(loggedUserId)))
+    if (((existance.checkIfContactExists(singleContact, contactNumberToRemove)) == true) && (singleContact[contactNumberToRemove-1].userId == auxiliaryMethods::intToString(loggedUserId)))
     {
         for (auto index = 0; index != singleContact.size(); index ++ )
         {
-            if (intToString(contactNumberToRemove) == singleContact[index].contactId)
+            if (auxiliaryMethods::intToString(contactNumberToRemove) == singleContact[index].contactId)
             {
                 cout << singleContact[index].contactName << " " << endl;
                 cout << singleContact[index].contactLastName << " " << endl;
@@ -479,7 +462,7 @@ void ContactMenager::RemoveContact(vector <Contact> &singleContact, int &loggedU
                 cout << singleContact[index].contactEmail << " " << endl;
                 cout << singleContact[index].contactAddress << " " << endl;
 
-                cout << "Wcisnij 't' aby potwierdzic usuniecie wybranego adresata: ";
+                cout << auxiliaryMethods::PL("Wciœnij 't' aby potwierdziæ usuniêcie wybranego adresata: ");
                 cin >> userAccept;
                 if (userAccept == 't')
                 {
@@ -494,13 +477,13 @@ void ContactMenager::RemoveContact(vector <Contact> &singleContact, int &loggedU
                         if(index + 1 != contactNumberToRemove) output << tmp[index] << endl;
                     }
                     output.close();
-                    cout << " Wybrany kontakt zostal usuniety!" << endl;
+                    cout << auxiliaryMethods::PL("Wybrany kontakt zosta³ usuniêty!") << endl;
                     Sleep(2000);
                 }
                 else
                 {
-                    cout << "Wybrany kontakt nie zostal usuniety" << endl;
-                    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
+                    cout << auxiliaryMethods::PL("Wybrany kontakt nie zosta³ usuniêty") << endl;
+                    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
                     getch();
                 }
             }

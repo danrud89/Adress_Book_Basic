@@ -19,8 +19,6 @@ class ContactMenager
         bool checkIfContactExists(vector <Contact> singleContact, int contactNumberToBeChanged);
         int FindPositionInVector (vector <Contact> singleContact, int contactNumberToBeChanged);
         int ReturnLastContactNumber (vector <Contact> singleContact);
-        string intToString(int IdNumber);
-        bool fileExists (const string& fileName);
         void ImportAllContacts (vector <Contact> &singleContact);
         void ImportContactsForLoggedUser (vector <Contact> &singleContact, int &loggedUserId);
         void ExportContactIntoFile (vector <Contact> &singleContactForExport );

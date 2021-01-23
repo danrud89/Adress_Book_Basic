@@ -17,8 +17,6 @@ class UserMenager
     public:
         vector <User> singleUser;
         int LoggTheUserIn (vector <User> &singleUser);
-        string intToString(int IdNumber);
-        bool fileExists (const string& fileName);
         void ImportAllUsers(vector <User> &singleUser);
         void RegisterNewUser(vector <User> &singleUser);
         void ExportNewUser (vector<User>& singleUser);
