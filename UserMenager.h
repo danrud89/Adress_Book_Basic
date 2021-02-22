@@ -9,18 +9,30 @@
 #include <sstream>
 #include <algorithm>
 #include <conio.h>
+#include "UsersFile.h"
+#include "Users.h"
+#include "DatabaseFile.h"
 
 using namespace std;
 
 class UserMenager
 {
+    vector <User> singleUser;
+    UsersFile usersFile;
+    int LoggedInUserId;
+
     public:
-        vector <User> singleUser;
-        int LoggTheUserIn (vector <User> &singleUser);
-        void ImportAllUsers(vector <User> &singleUser);
-        void RegisterNewUser(vector <User> &singleUser);
-        void ExportNewUser (vector<User>& singleUser);
-        void ChangeUserPassword (vector<User> &singleUser, int &loggedUserId);
+        UserMenager(string usersFileName): usersFile(usersFileName)
+        {
+            LoggedInUserId = 0;
+            singleUser = usersFile.ImportAllUsers();
+        }
+        bool CheckUserId();
+        int LoggTheUserIn ();
+        void RegisterNewUser();
+        void LoggTheUserOut();
+        void ChangeUserPassword();
+        int getLoggedInUserID();
 };
 
 #endif

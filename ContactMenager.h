@@ -9,27 +9,34 @@
 #include <sstream>
 #include <algorithm>
 #include <conio.h>
+#include "Contacts.h"
+#include "DatabaseFile.h"
+#include "ContactsFile.h"
+#include "Users.h"
+#include "UsersFile.h"
 
 using namespace std;
 
 class ContactMenager
 {
+    const int LOGGED_USER_ID;
+    ContactsFile contactsFile;
+    vector <Contact> singleContact;
+    Contact GetPersonalContactData();
+    void ShowContact(Contact contact);
+
     public:
-        vector <Contact> singleContact;
-        bool checkIfContactExists(vector <Contact> singleContact, int contactNumberToBeChanged);
-        int FindPositionInVector (vector <Contact> singleContact, int contactNumberToBeChanged);
-        int ReturnLastContactNumber (vector <Contact> singleContact);
-        void ImportAllContacts (vector <Contact> &singleContact);
-        void ImportContactsForLoggedUser (vector <Contact> &singleContact, int &loggedUserId);
-        void ExportContactIntoFile (vector <Contact> &singleContactForExport );
-        void AddNewContact (vector<Contact>& singleContact, int &loggedUserId);
-        void SearchByName (vector <Contact> & singleContact, string nameToSearch);
-        void SearchByLastName (vector <Contact> & singleContact, string lastNameToSearch);
-        void SearchForAContact (vector <Contact> &singleContact);
-        void ViewAllContacts (vector <Contact> &singleContact, int &loggedUserId);
-        void updateDatabaseContactFile(vector <Contact> &singleContact);
-        void ContactEdition(vector <Contact> &singleContact, int &loggedUserId);
-        void RemoveContact(vector <Contact> &singleContact, int &loggedUserId);
+        ContactMenager(string contactsFileName, int loggedUserId )
+        : contactsFile(contactsFileName), LOGGED_USER_ID(loggedUserId)
+        {
+            singleContact = contactsFile.ImportContactsForLoggedUser(LOGGED_USER_ID);
+        };
+        void AddNewContact();
+        void SearchByName();
+        void SearchByLastName();
+        void ViewAllContacts();
+        void ContactEdition();
+        void RemoveContact();
 };
 
 #endif

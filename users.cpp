@@ -6,31 +6,28 @@
 #include "auxiliaryMethods.h"
 
 using namespace std;
-/*
 
-void users::setId(int newId)
+void User::setId(unsigned int newId)
 {
-    userId = auxiliaryMethods::intToString(newId);
+    userId = newId;
 }
-void users::setName(string newName)
+void User::setName(string newName)
 {
     userName = newName;
 }
-void users::setPassword(string newPassword)
+void User::setPassword(string newPassword)
 {
     userPassword = newPassword;
 }
-
-int users::getId()
+unsigned int User::getId() const
 {
-    return auxiliaryMethods::intToString(newId);
+    return userId;
 }
-string users::getName()
+string User::getName() const
 {
-    return newName;
+    return userName;
 }
-string users::getPassword()
+string User::getPassword() const
 {
-    return newPassword;
+    return userPassword;
 }
-*/

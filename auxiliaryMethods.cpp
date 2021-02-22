@@ -16,11 +16,46 @@ bool auxiliaryMethods::fileExists (const string& fileName)
     return false;
 }
 
+string auxiliaryMethods::loadInputLine()
+{
+    string loadedLine = {};
+    getline(cin, loadedLine);
+    return loadedLine;
+}
+
 string auxiliaryMethods::intToString(int IdNumber)
 {
     ostringstream ss;
     ss << IdNumber;
     return  ss.str();
+}
+
+int auxiliaryMethods::stringToInt(string number)
+{
+    int intNumber;
+    istringstream ss(number);
+    ss >> intNumber;
+    return intNumber;
+}
+
+char auxiliaryMethods::loadInput()
+{
+    string input = "";
+    char mark  = {0};
+    cin.sync();
+
+    while (true)
+    {
+        getline(cin, input);
+
+        if (input.length() == 1)
+        {
+            mark = input[0];
+            break;
+        }
+        cout << "To nie jest pojedynczy znak. Wpisz ponownie." << endl;
+    }
+    return mark;
 }
 
 string auxiliaryMethods::PL (string singleMark)
@@ -101,4 +136,45 @@ string auxiliaryMethods::PL (string singleMark)
         }
     }
     return singleMark;
+}
+
+int auxiliaryMethods::extractIdNumber(string databaseLine, int linePosition)
+{
+    string stringDigit = "";
+    int intDigit = 0;
+
+    unsigned int index = 1;
+    unsigned int casePosition = 0;
+    while(index <= linePosition)
+    {
+        if (databaseLine[casePosition] == '|')
+        {
+            index ++; casePosition ++;
+        }
+        else if (databaseLine[casePosition] != '|' && linePosition == index )
+        {
+                stringDigit += databaseLine[casePosition];
+                casePosition ++;
+        }
+        else
+                casePosition++;
+    }
+    intDigit = stringToInt(stringDigit);
+    return intDigit;
+}
+
+bool auxiliaryMethods::isEmailValid (string eMail)
+{
+    if (eMail.find("@") != string::npos) return true;
+
+    else return false;
+}
+
+bool auxiliaryMethods::isPhoneNumberValid(string phoneNumber)
+{
+    for (int index = 0; index < phoneNumber.length(); index ++)
+    {
+        if (!isdigit(phoneNumber[index])) return false;
+        else return true;
+    }
 }
