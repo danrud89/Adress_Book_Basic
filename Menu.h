@@ -37,8 +37,8 @@ class MENU
             delete contactMenager;
             contactMenager = NULL;
         }
-        void displayUserMenu();
-        void displayLoggedUserMenu();
+        char displayUserMenu();
+        char displayLoggedUserMenu();
         bool CheckUserId();
         int LoggTheUserIn ();
         void RegisterNewUser();

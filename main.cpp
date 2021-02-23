@@ -6,15 +6,15 @@ using namespace std;
 int main()
 {
     MENU MainMenu("Uzytkownicy.txt", "Kontakty.txt");
+    char userSelection;
 
     while (true)
     {
         if (MainMenu.CheckUserId() == false)
         {
-            MainMenu.displayUserMenu();
-            char userFirstSelection = auxiliaryMethods::loadInput();
+            userSelection = MainMenu.displayUserMenu();
 
-            switch (userFirstSelection)
+            switch (userSelection)
             {
             case '1':
             {
@@ -29,7 +29,7 @@ int main()
 
             case '3':
             {
-                cout << auxiliaryMethods::PL("Nast¹pi zamkniêcie programu...");
+                cout << "Nastapi zamkniecie programu...";
                 Sleep(1500);
                 exit(0);
             }
@@ -42,11 +42,9 @@ int main()
         }
         else
         {
-            MainMenu.displayLoggedUserMenu();
+            char userSelection = MainMenu.displayLoggedUserMenu();
 
-            char userSecondSelection = auxiliaryMethods::loadInput();
-
-            switch (userSecondSelection)
+            switch (userSelection)
             {
             case '1':
             {
@@ -87,11 +85,12 @@ int main()
             break;
             case '8':
             {
+                MainMenu.LoggTheUserOut();
                 MainMenu.CheckUserId() == false;
-                cout << auxiliaryMethods::PL("Wylogowa3eo sie.");
+                cout << "Wylogowales sie.";
                 Sleep(1500);
-                break;
             }
+            break;
             default:
                 cout << endl << "Nie ma takiej opcji w menu." << endl << endl;
                 system("pause");

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void ContactMenager::AddNewContact ()
+void ContactMenager::AddNewContact()
 {
     system("cls");
     cout << ">>>DODAJ NOWY KONTAKT<<<" << endl;
@@ -41,7 +41,7 @@ void ContactMenager::SearchByName()
         }
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt." << endl;
-    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
+    cout << auxiliaryMethods::PL("Wcisnij dowolny klawisz aby kontynuowac...");
     getch();
 }
 
@@ -69,7 +69,7 @@ void ContactMenager::SearchByLastName ()
         }
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
+    cout << auxiliaryMethods::PL("Wcisnij dowolny klawisz aby kontynuowac...");
     getch();
 
 }
@@ -96,7 +96,7 @@ void ContactMenager::ViewAllContacts ()
         }
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
+    cout << auxiliaryMethods::PL("Wcisnij dowolny klawisz aby kontynuowac...");
     getch();
 }
 
@@ -152,6 +152,7 @@ Contact ContactMenager::GetPersonalContactData()
 
 void ContactMenager::ContactEdition()
 {
+    bool checkIfContactExists = false;
     system("cls");
     cout << ">>>EDYCJA WYBRANEGO KONTAKTU<<<" << endl;
     cout << "*********************************" << endl;
@@ -160,98 +161,86 @@ void ContactMenager::ContactEdition()
     if (!singleContact.empty())
     {
         int contactNumberToBeChanged = 0;
-        cout << auxiliaryMethods::PL("Podaj ID kontaktu, który chcesz edytowaæ: ") << endl;
+        cout << auxiliaryMethods::PL("Podaj ID kontaktu, który chcesz edytowac: ") << endl;
         cin >> contactNumberToBeChanged;
-        for(auto itr = singleContact.begin(); itr != singleContact.end(); ++ itr )
+        for(auto itr = singleContact.begin(); itr != singleContact.end(); itr ++ )
         {
             if(itr -> getContactId() == contactNumberToBeChanged)
             {
+                checkIfContactExists = true;
                 ShowContact(*itr);
                 cout << endl;
                 cout << "Wybierz dane do zmiany: " << endl;
                 cout << "1. Numer telefonu" << endl;
                 cout << "2. Adres e-mail" << endl;
                 cout << "3. Adres zamieszkania" << endl;
-                cout << endl;
-
-                int userChoice = 0;
-                userChoice = auxiliaryMethods::loadInput();
+                char userChoice = auxiliaryMethods::loadInput();
                 switch(userChoice)
                 {
                 case '1':
-                {
                     cout << "Podaj nowy numer telefonu: ";
                     itr -> setContactPhoneNumber(auxiliaryMethods::loadInputLine());
-                }
                 break;
+
                 case '2':
-                {
                     cout << "Podaj nowy adres e-mail: ";
                     itr -> setContactEmail(auxiliaryMethods::loadInputLine());
-                }
                 break;
+
                 case '3':
-                {
                     cout << "Podaj nowy adres zamieszkania: ";
                     itr -> setContactAddress(auxiliaryMethods::loadInputLine());
-                }
                 break;
                 }
                 contactsFile.updateDatabaseContactFile(*itr);
                 break;
             }
-            else if(itr -> getContactId() != contactNumberToBeChanged && itr == singleContact.end())
-            {
-                cout<< "Kontakt o takim numerze ID nie istnieje !" <<endl;
-                Sleep(2000);
-            }
         }
-
+        if (checkIfContactExists == false)
+            cout << "Kontakt o podanym ID nie istnieje" << endl;
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
+    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
     getch();
 }
 
 void ContactMenager::RemoveContact()
 {
     int contactNumberToRemove = 0;
+    bool checkIfContactExists = false;
     system("cls");
     cout << ">>>USUWANIE WYBRANEGO KONTAKTU<<<" << endl;
     cout << "*********************************" << endl;
     cout << endl;
 
-    bool contactExistance = false;
     if (!singleContact.empty())
     {
-        cout << auxiliaryMethods::PL("Podaj numer ID kontaktu, który chcesz usun¹æ: ");
+        cout << auxiliaryMethods::PL("Podaj numer ID kontaktu, który chcesz usunac: ");
         cin >> contactNumberToRemove;
         for (auto itr = singleContact.begin(); itr != singleContact.end(); ++ itr)
         {
             if (itr -> getContactId() == contactNumberToRemove)
             {
-                contactExistance = true;
+                checkIfContactExists = true;
                 ShowContact(*itr);
-                cout << auxiliaryMethods::PL("Wciœnij 't' aby potwierdziæ usuniêcie wybranego adresata: ");
+                cout << "Wcisnij 't' aby potwierdzic usuniecie wybranego adresata: ";
                 char userAccept = auxiliaryMethods::loadInput();
 
                 if (userAccept == 't')
                 {
                     singleContact.erase(itr);
                     contactsFile.RemoveContactFromFile(contactNumberToRemove);
+                    break;
                 }
                 else
-                    cout << auxiliaryMethods::PL("Wybrany kontakt nie zosta³ usuniêty") << endl;
+                    cout << "Wybrany kontakt nie zostal usuniety" << endl;
                     break;
             }
-            else if (itr -> getContactId() != contactNumberToRemove && itr == singleContact.end())
-            {
-                cout<< "Kontakt o takim numerze ID nie istnieje !" <<endl;
-                Sleep(2000);
-            }
         }
+        if (checkIfContactExists == false)
+            cout << "Kontakt o podanym ID nie istnieje" << endl;
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
-    cout << auxiliaryMethods::PL("Wciœnij dowolny klawisz aby kontynuowaæ...");
+    cout << "Wcisnij dowolny klawisz aby kontynuowac...";
     getch();
 }

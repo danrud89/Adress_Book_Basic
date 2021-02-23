@@ -17,60 +17,67 @@ vector<Contact> ContactsFile::ImportContactsForLoggedUser (int loggedUserId)
 
     if (contactsFile.good() == true)
     {
-        while(getline(contactsFile,personalData))
+        while(getline(contactsFile, personalData))
         {
             if (CheckUserId(personalData) == loggedUserId)
             {
-                string individualPersonalData = "";
-                unsigned int singleContactNumber = 1;
-
-                for (auto index = 0; index < personalData.length(); index ++)
-                {
-                    if (personalData[index] != '|')
-                    {
-                        individualPersonalData += personalData[index];
-                    }
-                    else
-                    {
-                        switch(singleContactNumber)
-                        {
-                        case 1:
-                            singleContact.setContactId(auxiliaryMethods::stringToInt(individualPersonalData));
-                            break;
-                        case 2:
-                            singleContact.setUserId(auxiliaryMethods::stringToInt(individualPersonalData));
-                            break;
-                        case 3:
-                            singleContact.setContactName(individualPersonalData);
-                            break;
-                        case 4:
-                            singleContact.setContactLastName(individualPersonalData);
-                            break;
-                        case 5:
-                            singleContact.setContactPhoneNumber(individualPersonalData);
-                            break;
-                        case 6:
-                            singleContact.setContactEmail(individualPersonalData);
-                            break;
-                        case 7:
-                            singleContact.setContactAddress(individualPersonalData);
-                            break;
-                        }
-                        individualPersonalData = "";
-                        singleContactNumber ++;
-                    }
-                }
+                singleContact = getSingleContactPersonalData(personalData, lastContactId);
                 contacts.push_back(singleContact);
-                lastContactPersonalData = personalData;
             }
+            lastContactPersonalData = personalData;
         }
-        contactsFile.close();
-        if (lastContactPersonalData != "")
-        {
+    contactsFile.close();
+    }
+    if (lastContactPersonalData != "")
+    {
         lastContactId = setLastContactID(lastContactPersonalData);
-        }
     }
     return contacts;
+}
+
+Contact ContactsFile::getSingleContactPersonalData(string personalData, int lastContactId)
+{
+    Contact singleContact;
+    string individualPersonalData = "";
+    unsigned int singleContactNumber = 1;
+
+    for (auto index = 0; index < personalData.length(); index ++)
+    {
+        if (personalData[index] != '|')
+        {
+            individualPersonalData += personalData[index];
+        }
+        else
+        {
+            switch(singleContactNumber)
+            {
+            case 1:
+                singleContact.setContactId(auxiliaryMethods::stringToInt(individualPersonalData));
+                break;
+            case 2:
+                singleContact.setUserId(auxiliaryMethods::stringToInt(individualPersonalData));
+                break;
+            case 3:
+                singleContact.setContactName(individualPersonalData);
+                break;
+            case 4:
+                singleContact.setContactLastName(individualPersonalData);
+                break;
+            case 5:
+                singleContact.setContactPhoneNumber(individualPersonalData);
+                break;
+            case 6:
+                singleContact.setContactEmail(individualPersonalData);
+                break;
+            case 7:
+                singleContact.setContactAddress(individualPersonalData);
+                break;
+            }
+            individualPersonalData = "";
+            singleContactNumber ++;
+        }
+    }
+    return singleContact;
 }
 void ContactsFile::ExportContactIntoFile (Contact contactForExport)
 {
@@ -84,7 +91,7 @@ void ContactsFile::ExportContactIntoFile (Contact contactForExport)
             contactsFile << contactForExport.getContactLastName() << "|";
             contactsFile << contactForExport.getContactPhoneNumber() << "|";
             contactsFile << contactForExport.getContactEmail() << "|";
-            contactsFile << contactForExport.getContactAddress() << endl;
+            contactsFile << contactForExport.getContactAddress() << "|" << endl;
 
         contactsFile.close();
         lastContactId ++;
@@ -93,33 +100,33 @@ void ContactsFile::ExportContactIntoFile (Contact contactForExport)
     Sleep(1000);
 }
 
-void ContactsFile::updateDatabaseContactFile(Contact singleContact)
+void ContactsFile::updateDatabaseContactFile(Contact singleContactToEdit)
 {
-    string singleLine = "";
-    string subLine = "";
-    int index = 0;
+    string singleLine = "", subLine;
     ifstream inputFile(getFileName().c_str());
     ofstream outputFile;
-    outputFile.open("Kontakty_temp.txt");
-    if(inputFile.good())
+    outputFile.open("Kontakty_tmp.txt", ios::out | ios::app);
+
+    if(inputFile.good() == true)
     {
         while (getline(inputFile, singleLine))
         {
-
+            subLine = "";
+            int index = 0;
             while(singleLine[index] != '|')
             {
                 subLine += singleLine[index];
                 index ++;
             }
-            if (atoi(subLine.c_str()) == singleContact.getContactId())
+            if (auxiliaryMethods::stringToInt(subLine) == singleContactToEdit.getContactId())
             {
-                outputFile<<singleContact.getContactId() << "|";
-                outputFile<<singleContact.getUserId() << "|";
-                outputFile<<singleContact.getContactName() << "|";
-                outputFile<<singleContact.getContactLastName() << "|";
-                outputFile<<singleContact.getContactPhoneNumber() << "|";
-                outputFile<<singleContact.getContactEmail() << "|";
-                outputFile<<singleContact.getContactAddress() << "|"<<endl;
+                outputFile<<singleContactToEdit.getContactId() << "|";
+                outputFile<<singleContactToEdit.getUserId() << "|";
+                outputFile<<singleContactToEdit.getContactName() << "|";
+                outputFile<<singleContactToEdit.getContactLastName() << "|";
+                outputFile<<singleContactToEdit.getContactPhoneNumber() << "|";
+                outputFile<<singleContactToEdit.getContactEmail() << "|";
+                outputFile<<singleContactToEdit.getContactAddress() << "|" << endl;
             }
             else outputFile << singleLine << endl;
         }
@@ -141,33 +148,34 @@ void ContactsFile::RemoveContactFromFile(int contactIdToBeDeleted)
 {
     ifstream inputFile(getFileName().c_str());
     ofstream outputFile;
-    outputFile.open("Kontakty_tmp", ios::out | ios::app);
-
+    outputFile.open("Kontakty_tmp.txt", ios::out | ios::app);
     string singleLine = "";
-    string subLine = "";
-    int index = 0;
-    if(inputFile.good())
+    string subLine;
+
+    if(inputFile.good() == true)
     {
         while (getline(inputFile, singleLine))
         {
+            subLine = "";
+            int index = 0;
             while(singleLine[index] != '|')
             {
                 subLine += singleLine[index];
                 index ++;
             }
-            if(atoi(subLine.c_str()) == contactIdToBeDeleted)
+            if(auxiliaryMethods::stringToInt(subLine) == contactIdToBeDeleted)
             continue;
             else
             {
                 outputFile << singleLine << endl;
-                lastContactId = atoi(subLine.c_str());
+                lastContactId = auxiliaryMethods::stringToInt(subLine);
             }
         }
         outputFile.close();
         inputFile.close();
         remove(getFileName().c_str());
-        rename("Kontakty_tmp", getFileName().c_str());
-        cout << "Wybrany kontakt zostal usuniety";
+        rename("Kontakty_tmp.txt", getFileName().c_str());
+        cout << "Wybrany kontakt zostal usuniety." << endl;
     }
     else
     {

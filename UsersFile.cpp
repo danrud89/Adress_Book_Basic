@@ -3,6 +3,7 @@
 #include "auxiliaryMethods.h"
 #include "UsersFile.h"
 #include <conio.h>
+#include <stdio.h>
 
 vector<User> UsersFile::ImportAllUsers()
 {
@@ -57,7 +58,6 @@ void UsersFile::ExportNewUser(User singleUser)
         Sleep(1500);
     }
 }
-
 void UsersFile::ChangePasswordInFile(User loggedInUser)
 {
     ifstream inputFile(getFileName().c_str());
@@ -90,7 +90,7 @@ void UsersFile::ChangePasswordInFile(User loggedInUser)
     }
     else
     {
-        cout<<"Program napotkal blad. Nie mozna otworzyc pliku.";
+        cout << "Program napotkal blad. Nie mozna otworzyc pliku.";
         outputFile.close();
         remove("Uzytkownicy_tmp.txt");
     }

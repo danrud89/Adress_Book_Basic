@@ -16,7 +16,7 @@ User::User(unsigned int userId, string userName, string userPassword)
 void UserMenager::RegisterNewUser()
 {
     system("cls");
-    cout<< auxiliaryMethods::PL(">>>REJESTRACJA NOWEGO UŻYTKOWNIKA<<<") <<endl;
+    cout<< ">>>REJESTRACJA NOWEGO UZYTKOWNIKA<<<" <<endl;
     cout<< "************************************" <<endl;
     cout<< endl;
 
@@ -24,19 +24,19 @@ void UserMenager::RegisterNewUser()
     int userCounter = singleUser.size();
     string userName, userPassword, userId;
     singleUserForExport.setId(userCounter + 1);
-    cout<< auxiliaryMethods::PL("Podaj nazwê u¿ytkownika: ");
+    cout<< auxiliaryMethods::PL("Podaj nazwe uzytkownika: ");
     userName = auxiliaryMethods::loadInputLine();
     singleUserForExport.setName(userName);
     for (auto itr = singleUser.begin(); itr != singleUser.end(); ++ itr)
     {
         if (itr -> getName() == userName)
         {
-            cout << auxiliaryMethods::PL("U¿ytkownik o takiej nazwie ju¿ istnieje! Podaj inn¹ nazwê: ");
+            cout << auxiliaryMethods::PL("Uzytkownik o takiej nazwie juz istnieje! Podaj inna nazwe: ");
             userName = auxiliaryMethods::loadInputLine();
             singleUserForExport.setName(userName);
         }
     }
-    cout<< auxiliaryMethods::PL("Podaj has³o: ");
+    cout<< auxiliaryMethods::PL("Podaj haslo: ");
     userPassword = auxiliaryMethods::loadInputLine();
     singleUserForExport.setPassword(userPassword);
     singleUser.push_back(singleUserForExport);
@@ -60,7 +60,7 @@ int UserMenager::LoggTheUserIn ()
             {
                 for(auto attempt = 0; attempt < 3; attempt ++)
                 {
-                    cout<< auxiliaryMethods::PL("Podaj has³o. Pozosta³o prób")<<" "<<"("<<(3 - attempt)<<")" <<": " ;
+                    cout<< auxiliaryMethods::PL("Podaj haslo. Pozostalo prob")<<" "<<"("<<(3 - attempt)<<")" <<": " ;
                     userPassword = auxiliaryMethods::loadInputLine();
                     if (userPassword == itr -> getPassword())
                     {
@@ -70,29 +70,29 @@ int UserMenager::LoggTheUserIn ()
                         return 0;
                     }
                 }
-                cout << auxiliaryMethods::PL("Wprowadzono 3 razy b³êdne has³o. Zaczekaj 3 sekundy przed kolejn¹ prób¹...") << endl;
+                cout << auxiliaryMethods::PL("Wprowadzono 3 razy bledne haslo. Zaczekaj 3 sekundy przed kolejna próba...") << endl;
                 Sleep(3000);
                 return 0;
             }
         }
-        cout<< auxiliaryMethods::PL("Nie znaleziono u¿ytkowanika o podanym loginie. Spróbuj ponownie.") <<endl;
+        cout << auxiliaryMethods::PL("Nie znaleziono uzytkowanika o podanym loginie. Sprobuj ponownie.") <<endl;
         Sleep(1500);
     }
     else
-    cout<<"Brak zalogowanych uzytkownikow! Utworz konto.";
+    cout << "Brak zalogowanych uzytkownikow! Utworz konto.";
     Sleep(1500);
 }
 
 void UserMenager::ChangeUserPassword()
 {
     system("cls");
-    cout<< auxiliaryMethods::PL(">>>ZMIANA HAS£A<<<") <<endl;
+    cout<< auxiliaryMethods::PL(">>>ZMIANA HASLA<<<") <<endl;
     cout<< "******************" <<endl;
     cout<< endl;
     string newUserPassword, oldUserPassword;
-    cout<< auxiliaryMethods::PL("Podaj stare has³o: ");
+    cout<< auxiliaryMethods::PL("Podaj stare haslo: ");
     oldUserPassword = auxiliaryMethods::loadInputLine();
-    cout<< auxiliaryMethods::PL("Podaj nowe has³o: ");
+    cout<< auxiliaryMethods::PL("Podaj nowe haslo: ");
     newUserPassword = auxiliaryMethods::loadInputLine();
     for(auto itr = singleUser.begin(); itr != singleUser.end(); ++ itr)
     {
@@ -104,6 +104,7 @@ void UserMenager::ChangeUserPassword()
             usersFile.ChangePasswordInFile(*itr);
             cout<<"Haslo zmienione pomyslnie!";
             Sleep(2000);
+            break;
             }
         }
         else cout << "Nie udalo sie zmienic hasla";
