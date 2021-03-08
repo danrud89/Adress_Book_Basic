@@ -129,6 +129,7 @@ Contact ContactMenager::GetPersonalContactData()
             cout << "Podales niewlasciwy numer telefonu. Sprobuj jeszcze raz: ";
         }
     }
+
     cout << "Podaj adres e-mail: ";
     while (true)
     {
@@ -143,6 +144,7 @@ Contact ContactMenager::GetPersonalContactData()
             cout << "Podales niewlasciwy adres e-mail. Sprobuj jeszcze raz: ";
         }
     }
+
     cout << "Podaj adres (ulica, kod pocztowy, miasto): ";
     contactAddress = auxiliaryMethods::loadInputLine();
     contact.setContactAddress(contactAddress);
@@ -178,26 +180,46 @@ void ContactMenager::ContactEdition()
                 switch(userChoice)
                 {
                 case '1':
-                    cout << "Podaj nowy numer telefonu: ";
-                    itr -> setContactPhoneNumber(auxiliaryMethods::loadInputLine());
+                    while (true)
+                    {
+                        string newPhoneNumber = "";
+                        cout << "Podaj nowy numer telefonu: ";
+                        newPhoneNumber = auxiliaryMethods::loadInputLine();
+                        if (auxiliaryMethods::isPhoneNumberValid(newPhoneNumber) == true)
+                        {
+                            itr -> setContactPhoneNumber(newPhoneNumber);
+                            break;
+                        }
+                        else cout << "Podales niewlasciwy numer telefonu. Sproboj jeszcze raz." << endl;
+                    }
                 break;
 
                 case '2':
-                    cout << "Podaj nowy adres e-mail: ";
-                    itr -> setContactEmail(auxiliaryMethods::loadInputLine());
+                    while (true)
+                    {
+                        string newEmail = "";
+                        cout << "Podaj nowy adres e-mail: ";
+                        newEmail = auxiliaryMethods::loadInputLine();
+                        if (auxiliaryMethods::isPhoneNumberValid(newEmail) == true)
+                        {
+                            itr -> setContactEmail(newEmail);
+                            break;
+                        }
+                        else cout << "Podales niewlasciwy numer telefonu. Sproboj jeszcze raz." << endl;
+                    }
                 break;
 
                 case '3':
-                    cout << "Podaj nowy adres zamieszkania: ";
+                    cout << "Podaj nowy adres (ulica, kod pocztowy, miasto): ";
                     itr -> setContactAddress(auxiliaryMethods::loadInputLine());
                 break;
                 }
-                contactsFile.updateDatabaseContactFile(*itr);
+                contactsFile.UpdateDatabaseContactFile(*itr);
                 break;
             }
         }
         if (checkIfContactExists == false)
-            cout << "Kontakt o podanym ID nie istnieje" << endl;
+            cout << "Kontakt o podanym ID nie istnieje." << endl;
     }
     else cout << "Ksiazka adresowa jest pusta. Dodaj nowy kontakt" << endl;
     cout << "Wcisnij dowolny klawisz aby kontynuowac...";
@@ -226,7 +248,7 @@ void ContactMenager::RemoveContact()
                 cout << "Wcisnij 't' aby potwierdzic usuniecie wybranego adresata: ";
                 char userAccept = auxiliaryMethods::loadInput();
 
-                if (userAccept == 't')
+                if (userAccept == 't' || 'T')
                 {
                     singleContact.erase(itr);
                     contactsFile.RemoveContactFromFile(contactNumberToRemove);

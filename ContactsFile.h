@@ -20,13 +20,12 @@ class ContactsFile : public DatabaseFile
           lastContactId = 0;
         };
         vector<Contact> ImportContactsForLoggedUser (int loggedUserId);
-
         void ExportContactIntoFile (Contact singleContactForExport );
-        void updateDatabaseContactFile(Contact singleContact);
+        void UpdateDatabaseContactFile(Contact singleContact);
         int ReturnLastContactNumber (Contact singleContactToEdit);
         void RemoveContactFromFile(int contactIdToDeleted);
         int setLastContactID(string dataLine);
-        int getLastContactID();
+        int getLastContactID() const;
         int CheckUserId(string dataLine);
 };
 

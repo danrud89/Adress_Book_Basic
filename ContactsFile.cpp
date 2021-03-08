@@ -100,7 +100,7 @@ void ContactsFile::ExportContactIntoFile (Contact contactForExport)
     Sleep(1000);
 }
 
-void ContactsFile::updateDatabaseContactFile(Contact singleContactToEdit)
+void ContactsFile::UpdateDatabaseContactFile(Contact singleContactToEdit)
 {
     string singleLine = "", subLine;
     ifstream inputFile(getFileName().c_str());
@@ -185,7 +185,7 @@ void ContactsFile::RemoveContactFromFile(int contactIdToBeDeleted)
     }
 }
 
-int ContactsFile::getLastContactID()
+int ContactsFile::getLastContactID() const
 {
     return lastContactId;
 }

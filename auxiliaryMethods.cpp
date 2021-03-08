@@ -5,14 +5,14 @@ using namespace std;
 
 bool auxiliaryMethods::fileExists (const string& fileName)
 {
-    fstream Database;
-    Database.open(fileName.c_str(), ios::in);
-    if ( Database.is_open() )
+    fstream inputFile;
+    inputFile.open(fileName.c_str(), ios::in);
+    if ( inputFile.is_open() )
     {
-        Database.close();
+        inputFile.close();
         return true;
     }
-    Database.close();
+    inputFile.close();
     return false;
 }
 
@@ -172,9 +172,10 @@ bool auxiliaryMethods::isEmailValid (string eMail)
 
 bool auxiliaryMethods::isPhoneNumberValid(string phoneNumber)
 {
-    for (int index = 0; index < phoneNumber.length(); index ++)
+    for (int index = 0; index < phoneNumber.length(); index ++ )
     {
-        if (!isdigit(phoneNumber[index])) return false;
-        else return true;
+        if (!isdigit(phoneNumber[index]))
+        return false;
     }
+    return true;
 }

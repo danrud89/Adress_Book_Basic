@@ -30,7 +30,6 @@ void Contact::setContactPhoneNumber(string newPhoneNumber)
 {
     contactPhoneNumber = newPhoneNumber;
 }
-
 void Contact::setContactEmail(string newEmail)
 {
     contactEmail = newEmail;
